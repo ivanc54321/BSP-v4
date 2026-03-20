@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   ArrowLeft, X, Home, FileText, User, Settings, 
@@ -9,6 +9,10 @@ import {
 
 export default function App() {
   const [step, setStep] = useState(1);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [step]);
 
   const nextStep = () => setStep(s => Math.min(4, s + 1));
   const prevStep = () => setStep(s => Math.max(1, s - 1));
