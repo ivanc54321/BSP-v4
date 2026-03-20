@@ -125,28 +125,12 @@ function Step1({ onNext }: { onNext: () => void }) {
       <div className="bg-surface-low rounded-[2rem] p-8 mb-10 flex justify-center items-center relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-tr from-brand-lime/5 to-transparent"></div>
         
-        <div className="relative w-48 h-64 border-4 border-surface-highest rounded-2xl p-1.5 flex gap-1.5 bg-surface-bg z-10 shadow-sm">
-          <div className="flex-1 border-2 border-surface-highest/50 rounded-xl bg-surface-low/50"></div>
-          <div className="flex-1 border-2 border-surface-highest/50 rounded-xl bg-surface-low/50"></div>
-          
-          {/* Height Line */}
-          <div className="absolute -right-8 top-4 bottom-4 flex flex-col items-center">
-            <div className="w-px h-full bg-brand-lime relative">
-              <div className="absolute -top-1 -left-1 w-2 h-2 border-t-2 border-l-2 border-brand-lime rotate-45"></div>
-              <div className="absolute -bottom-1 -left-1 w-2 h-2 border-b-2 border-l-2 border-brand-lime -rotate-45"></div>
-            </div>
-            <div className="absolute top-1/2 -translate-y-1/2 bg-surface-bg px-2 py-1 rounded text-[10px] font-bold text-brand-dark shadow-sm">Height</div>
-          </div>
-          
-          {/* Width Line */}
-          <div className="absolute -bottom-8 left-4 right-4 flex items-center">
-            <div className="h-px w-full bg-brand-lime relative">
-              <div className="absolute -left-1 -top-1 w-2 h-2 border-b-2 border-l-2 border-brand-lime rotate-45"></div>
-              <div className="absolute -right-1 -top-1 w-2 h-2 border-t-2 border-r-2 border-brand-lime rotate-45"></div>
-            </div>
-            <div className="absolute left-1/2 -translate-x-1/2 bg-surface-bg px-2 py-1 rounded text-[10px] font-bold text-brand-dark shadow-sm">Width</div>
-          </div>
-        </div>
+        <img 
+          src="https://i.ibb.co/HLZCS7Zp/Chat-GPT-Image-Mar-17-2026-05-04-40-PM.png" 
+          alt="Window Diagram" 
+          className="relative z-10 w-full max-w-xs object-contain mix-blend-darken"
+          referrerPolicy="no-referrer"
+        />
       </div>
 
       {/* Inputs */}
