@@ -4,23 +4,33 @@ import {
   ArrowLeft, X, Home, FileText, User, Settings, 
   Info, Lightbulb, ShieldCheck, Minus, Plus, 
   ArrowRight, EyeOff, Shield, Sliders, Calendar, 
-  Bookmark, Check, ChevronDown, LayoutGrid
+  Bookmark, Check, ChevronDown, LayoutGrid,
+  Moon, Sun
 } from 'lucide-react';
 
 export default function App() {
   const [step, setStep] = useState(1);
+  const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [step]);
 
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDark]);
+
   const nextStep = () => setStep(s => Math.min(4, s + 1));
   const prevStep = () => setStep(s => Math.max(1, s - 1));
 
   return (
-    <div className="min-h-screen bg-surface-bg text-text-main font-body pb-32 overflow-x-hidden">
+    <div className="min-h-screen bg-surface-bg text-text-main font-body pb-32 overflow-x-hidden transition-colors duration-300">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-surface-bg/90 backdrop-blur-xl px-6 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-50 bg-surface-bg/90 backdrop-blur-xl px-6 py-4 flex items-center justify-between transition-colors duration-300">
         <button onClick={prevStep} className="text-brand-dark hover:opacity-70 transition-opacity p-2 -ml-2">
           <ArrowLeft size={24} />
         </button>
@@ -30,9 +40,18 @@ export default function App() {
           </div>
           Brightside
         </div>
-        <button className="text-brand-dark hover:opacity-70 transition-opacity p-2 -mr-2">
-          <X size={24} />
-        </button>
+        <div className="flex items-center gap-2 -mr-2">
+          <button 
+            onClick={() => setIsDark(!isDark)} 
+            className="text-brand-dark hover:opacity-70 transition-opacity p-2"
+            aria-label="Toggle Dark Mode"
+          >
+            {isDark ? <Sun size={24} /> : <Moon size={24} />}
+          </button>
+          <button className="text-brand-dark hover:opacity-70 transition-opacity p-2">
+            <X size={24} />
+          </button>
+        </div>
       </header>
       
       {/* Subtle separator */}
@@ -109,6 +128,9 @@ function ProgressBar({ step, total, label }: { step: number, total: number, labe
 
 function Step1({ onNext }: { onNext: () => void }) {
   const [count, setCount] = useState(1);
+  const [width, setWidth] = useState('');
+  const [height, setHeight] = useState('');
+  const [privacyLevel, setPrivacyLevel] = useState(50);
 
   return (
     <div className="flex flex-col">
@@ -117,31 +139,121 @@ function Step1({ onNext }: { onNext: () => void }) {
       <h1 className="font-headline text-4xl md:text-5xl font-extrabold text-text-main tracking-tight leading-tight mb-4">
         Window<br/>Dimensions
       </h1>
-      <p className="text-text-muted text-lg mb-10 leading-relaxed max-w-md">
+      <p className="text-text-muted text-lg mb-8 leading-relaxed max-w-md">
         Enter the approximate measurements for your two-pane window replacement. Accuracy helps us provide a better estimate.
       </p>
 
+      {/* Privacy Slider */}
+      <div className="mb-8 bg-surface-low p-5 rounded-2xl border border-surface-highest/30 shadow-sm">
+        <div className="flex justify-between items-center mb-3">
+          <label className="font-bold text-sm text-text-main flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-brand-lime"></div>
+            Privacy Film Height
+          </label>
+          <span className="text-xs font-bold text-brand-dark bg-brand-lime/20 px-2 py-1 rounded-md">{privacyLevel}%</span>
+        </div>
+        <input
+          type="range"
+          min="0"
+          max="100"
+          value={privacyLevel}
+          onChange={(e) => setPrivacyLevel(Number(e.target.value))}
+          className="w-full h-2 bg-surface-highest rounded-lg appearance-none cursor-pointer accent-brand-lime"
+        />
+      </div>
+
       {/* Diagram Area */}
-      <div className="bg-surface-low rounded-[2rem] p-8 mb-10 flex justify-center items-center relative overflow-hidden">
+      <div className="bg-surface-low rounded-[2rem] p-8 mb-12 flex justify-center items-center relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-tr from-brand-lime/5 to-transparent"></div>
         
-        <img 
-          src="https://i.ibb.co/HLZCS7Zp/Chat-GPT-Image-Mar-17-2026-05-04-40-PM.png" 
-          alt="Window Diagram" 
-          className="relative z-10 w-full max-w-xs object-contain mix-blend-darken"
-          referrerPolicy="no-referrer"
-        />
+        <div className="relative w-64 h-64 z-10 my-4">
+          {/* Window Frame Outer */}
+          <div className="absolute inset-0 border-[12px] border-[#f0f0f0] rounded-md bg-[#e0e0e0] flex gap-2 shadow-[inset_0_2px_10px_rgba(0,0,0,0.1),0_10px_30px_rgba(0,0,0,0.1)] p-1">
+            {/* Left Pane Outer */}
+            <div className="flex-[0.48] bg-[#f8f8f8] rounded-sm border-[4px] border-[#f8f8f8] relative shadow-[inset_0_0_5px_rgba(0,0,0,0.2)] overflow-hidden">
+              {/* "Outside" Background */}
+              <div className="absolute inset-0 bg-gradient-to-b from-sky-200 to-sky-50">
+                <div className="absolute top-10 left-4 w-12 h-4 bg-white/60 rounded-full blur-sm"></div>
+                <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-emerald-700/20 blur-md"></div>
+              </div>
+
+              {/* Frosted Film */}
+              <div 
+                className="absolute bottom-0 left-0 right-0 bg-white/40 backdrop-blur-md border-t border-white/60 transition-all duration-200 ease-out"
+                style={{ height: `${privacyLevel}%` }}
+              >
+                {/* Stripes */}
+                <div className="absolute inset-0 opacity-40" style={{ backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 8px, rgba(255,255,255,0.9) 8px, rgba(255,255,255,0.9) 16px)' }}></div>
+              </div>
+
+              {/* Handle */}
+              <div className="absolute top-1/2 -right-1 w-2.5 h-12 bg-gradient-to-b from-[#e0e0e0] to-[#c0c0c0] rounded-full -translate-y-1/2 shadow-md z-10 border border-[#a0a0a0]"></div>
+            </div>
+
+            {/* Right Pane Outer */}
+            <div className="flex-[0.52] bg-[#f8f8f8] rounded-sm border-[4px] border-[#f8f8f8] relative shadow-[inset_0_0_5px_rgba(0,0,0,0.2)] overflow-hidden">
+              {/* "Outside" Background */}
+              <div className="absolute inset-0 bg-gradient-to-b from-sky-200 to-sky-50">
+                <div className="absolute top-16 right-6 w-16 h-5 bg-white/60 rounded-full blur-sm"></div>
+                <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-emerald-700/20 blur-md"></div>
+              </div>
+
+              {/* Frosted Film */}
+              <div 
+                className="absolute bottom-0 left-0 right-0 bg-white/40 backdrop-blur-md border-t border-white/60 transition-all duration-200 ease-out"
+                style={{ height: `${privacyLevel}%` }}
+              >
+                {/* Stripes */}
+                <div className="absolute inset-0 opacity-40" style={{ backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 8px, rgba(255,255,255,0.9) 8px, rgba(255,255,255,0.9) 16px)' }}></div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Height Line */}
+          <div className="absolute -right-8 top-0 bottom-0 flex flex-col items-center">
+            <div className="w-px h-full bg-brand-lime relative">
+              <div className="absolute -top-1 -left-1 w-2 h-2 border-t-2 border-l-2 border-brand-lime rotate-45"></div>
+              <div className="absolute -bottom-1 -left-1 w-2 h-2 border-b-2 border-l-2 border-brand-lime -rotate-45"></div>
+            </div>
+            <div className="absolute top-1/2 -translate-y-1/2 bg-surface-bg px-2 py-1 rounded text-[10px] font-bold text-brand-dark shadow-sm whitespace-nowrap">
+              {height ? `${height} cm` : 'Height'}
+            </div>
+          </div>
+          
+          {/* Width Line */}
+          <div className="absolute -bottom-8 left-0 right-0 flex items-center">
+            <div className="h-px w-full bg-brand-lime relative">
+              <div className="absolute -left-1 -top-1 w-2 h-2 border-b-2 border-l-2 border-brand-lime rotate-45"></div>
+              <div className="absolute -right-1 -top-1 w-2 h-2 border-t-2 border-r-2 border-brand-lime rotate-45"></div>
+            </div>
+            <div className="absolute left-1/2 -translate-x-1/2 bg-surface-bg px-2 py-1 rounded text-[10px] font-bold text-brand-dark shadow-sm whitespace-nowrap">
+              {width ? `${width} cm` : 'Width'}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Inputs */}
       <div className="space-y-6 mb-10">
         <div>
           <label className="block font-bold text-sm mb-2 ml-1">Width (cm)</label>
-          <input type="number" placeholder="e.g. 120" className="w-full bg-surface-highest/50 border-none rounded-2xl p-5 text-lg focus:ring-2 focus:ring-brand-lime outline-none transition-shadow placeholder:text-text-muted/50 font-medium" />
+          <input 
+            type="number" 
+            value={width}
+            onChange={(e) => setWidth(e.target.value)}
+            placeholder="e.g. 120" 
+            className="w-full bg-surface-highest/50 border-none rounded-2xl p-5 text-lg focus:ring-2 focus:ring-brand-lime outline-none transition-shadow placeholder:text-text-muted/50 font-medium" 
+          />
         </div>
         <div>
           <label className="block font-bold text-sm mb-2 ml-1">Height (cm)</label>
-          <input type="number" placeholder="e.g. 150" className="w-full bg-surface-highest/50 border-none rounded-2xl p-5 text-lg focus:ring-2 focus:ring-brand-lime outline-none transition-shadow placeholder:text-text-muted/50 font-medium" />
+          <input 
+            type="number" 
+            value={height}
+            onChange={(e) => setHeight(e.target.value)}
+            placeholder="e.g. 150" 
+            className="w-full bg-surface-highest/50 border-none rounded-2xl p-5 text-lg focus:ring-2 focus:ring-brand-lime outline-none transition-shadow placeholder:text-text-muted/50 font-medium" 
+          />
         </div>
       </div>
 
@@ -208,20 +320,20 @@ function Step2({ onNext }: { onNext: () => void }) {
         <DesignCard 
           title="Stripes" 
           desc="Classic linear pattern for privacy. Ideal for office dividers and modern residential entries."
-          imgUrl="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800"
+          imgUrl="https://i.ibb.co/HLZCS7Zp/Chat-GPT-Image-Mar-17-2026-05-04-40-PM.png"
           popular
           onSelect={onNext}
         />
         <DesignCard 
           title="Frosted" 
           desc="Maximum privacy with high light transmission. The architectural standard for bathrooms and storefronts."
-          imgUrl="https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=800"
+          imgUrl="https://i.ibb.co/vvjtVcjV/stripe.png"
           onSelect={onNext}
         />
         <DesignCard 
           title="Brick Style" 
           desc="Geometric staggered pattern providing a unique textured look and partial visibility."
-          imgUrl="https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&q=80&w=800"
+          imgUrl="https://i.ibb.co/wNz9X34w/Untitled-3.png"
           onSelect={onNext}
         />
       </div>
