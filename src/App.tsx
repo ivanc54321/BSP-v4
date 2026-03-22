@@ -5,7 +5,7 @@ import {
   Info, Lightbulb, ShieldCheck, Minus, Plus, 
   ArrowRight, EyeOff, Shield, Sliders, Calendar, 
   Bookmark, Check, ChevronDown, LayoutGrid,
-  Moon, Sun
+  Moon, Sun, Phone
 } from 'lucide-react';
 
 export default function App() {
@@ -110,35 +110,6 @@ function NavItem({ icon, label, active = false, onClick }: { icon: React.ReactNo
   );
 }
 
-function Tooltip({ children, content }: { children: React.ReactNode, content: string }) {
-  const [isVisible, setIsVisible] = useState(false);
-  
-  return (
-    <div 
-      className="relative inline-flex items-center"
-      onMouseEnter={() => setIsVisible(true)}
-      onMouseLeave={() => setIsVisible(false)}
-      onFocus={() => setIsVisible(true)}
-      onBlur={() => setIsVisible(false)}
-    >
-      {children}
-      <AnimatePresence>
-        {isVisible && (
-          <motion.div 
-            initial={{ opacity: 0, y: 5 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 5 }}
-            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-brand-dark text-white text-xs rounded-lg whitespace-nowrap z-50 pointer-events-none shadow-xl border border-white/10"
-          >
-            {content}
-            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-brand-dark"></div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
 function ProgressBar({ step, total, label }: { step: number, total: number, label: string }) {
   const percentage = (step / total) * 100;
   return (
@@ -162,20 +133,42 @@ function ProgressBar({ step, total, label }: { step: number, total: number, labe
 // --- STEPS ---
 
 function Step0({ onNext }: { onNext: () => void }) {
+  const [currentImage, setCurrentImage] = useState(0);
+
+  const images = [
+    "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80&w=800",
+    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800",
+    "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800"
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentImage((prev) => (prev + 1) % images.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <div className="flex flex-col -mt-8 -mx-6">
       {/* Hero Section */}
-      <div className="relative bg-brand-lime pt-12 pb-24 px-6 rounded-b-[2.5rem] overflow-hidden mb-8 shadow-lg min-h-[320px] flex flex-col justify-start">
-        {/* Background Image */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 1.05 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="absolute inset-0 z-0"
-        >
-          <img src="https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80&w=800" alt="Brightside Van" className="w-full h-full object-cover opacity-50 mix-blend-multiply" style={{ filter: 'grayscale(100%) contrast(1.2)' }} />
+      <div className="relative bg-brand-lime pt-8 pb-16 px-6 rounded-b-[2rem] overflow-hidden mb-6 shadow-lg min-h-[260px] flex flex-col justify-start">
+        {/* Background Image Slideshow */}
+        <div className="absolute inset-0 z-0 bg-black">
+          <AnimatePresence mode="popLayout">
+            <motion.img
+              key={currentImage}
+              src={images[currentImage]}
+              alt="Installation Background"
+              initial={{ opacity: 0, scale: 1.05 }}
+              animate={{ opacity: 0.5, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.5, ease: "easeInOut" }}
+              className="absolute inset-0 w-full h-full object-cover mix-blend-multiply"
+              style={{ filter: 'grayscale(100%) contrast(1.2)' }}
+            />
+          </AnimatePresence>
           <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/20 to-brand-lime/40"></div>
-        </motion.div>
+        </div>
 
         {/* Background Pattern */}
         <div className="absolute inset-0 z-0 opacity-20 mix-blend-overlay" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, black 1px, transparent 0)', backgroundSize: '16px 16px' }}></div>
@@ -186,31 +179,30 @@ function Step0({ onNext }: { onNext: () => void }) {
           transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
           className="relative z-10"
         >
-          <h1 className="font-headline text-4xl font-black text-white tracking-tight leading-[1.05] mb-2 uppercase drop-shadow-md">
+          <h1 className="font-headline text-3xl font-black text-white tracking-tight leading-[1.05] mb-2 uppercase drop-shadow-md">
             Static Glazing<br/>
             <span className="text-brand-lime drop-shadow-sm">Installation</span>
           </h1>
-          <h2 className="font-headline text-sm font-bold text-white/80 tracking-widest uppercase mb-2 drop-shadow-md">
+          <h2 className="font-headline text-xs font-bold text-white/80 tracking-widest uppercase mb-2 drop-shadow-md">
             Window Privacy Film
           </h2>
         </motion.div>
       </div>
 
-      {/* Floating Button */}
+      {/* Floating Buttons */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.4, ease: "easeOut" }}
-        className="flex justify-center -mt-16 relative z-20 mb-12"
+        className="flex justify-center gap-3 -mt-12 relative z-20 mb-10 px-6"
       >
         <motion.button 
           onClick={onNext} 
           animate={{ 
-            scale: [1, 1.05, 1],
             boxShadow: [
-              "0px 8px 30px rgba(180,207,82,0.3)",
-              "0px 15px 40px rgba(180,207,82,0.6)",
-              "0px 8px 30px rgba(180,207,82,0.3)"
+              "0px 8px 20px rgba(180,207,82,0.3)",
+              "0px 12px 25px rgba(180,207,82,0.5)",
+              "0px 8px 20px rgba(180,207,82,0.3)"
             ]
           }}
           transition={{ 
@@ -218,9 +210,15 @@ function Step0({ onNext }: { onNext: () => void }) {
             repeat: Infinity, 
             ease: "easeInOut" 
           }}
-          className="bg-brand-lime text-black font-headline font-extrabold text-lg py-4 px-10 rounded-2xl hover:bg-[#b4cf52] border border-white/20 flex items-center gap-2"
+          className="bg-brand-lime text-black font-headline font-extrabold text-sm py-3 px-6 rounded-xl hover:bg-[#b4cf52] border border-white/20 flex items-center justify-center gap-2 flex-1 shadow-lg"
         >
-          Start Your Quote <ArrowRight size={20} />
+          Start Quote <ArrowRight size={18} />
+        </motion.button>
+
+        <motion.button 
+          className="bg-surface-bg text-text-main font-headline font-bold text-sm py-3 px-5 rounded-xl border border-surface-highest flex items-center justify-center gap-2 shadow-lg hover:bg-surface-highest transition-colors"
+        >
+          <Phone size={18} className="text-brand-lime" /> Contact Us
         </motion.button>
       </motion.div>
 
@@ -420,9 +418,6 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
           <label className="font-bold text-xs text-text-main flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-brand-lime"></div>
             Privacy Film Height
-            <Tooltip content="Adjust how high the frosted film covers the window">
-              <Info size={14} className="text-text-muted cursor-help" />
-            </Tooltip>
           </label>
           <span className="text-[10px] font-bold text-brand-dark bg-brand-lime/20 px-2 py-1 rounded-md">{privacyLevel}%</span>
         </div>
@@ -438,13 +433,6 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
 
       {/* Diagram Area */}
       <div className="bg-surface-low rounded-[2rem] p-8 mb-12 flex justify-center items-center relative overflow-hidden">
-        <div className="absolute top-4 right-4 z-20">
-          <Tooltip content="You can also drag up and down on the window to adjust privacy height">
-            <div className="bg-surface-highest/50 p-2 rounded-full text-text-muted hover:text-text-main transition-colors cursor-help">
-              <Info size={16} />
-            </div>
-          </Tooltip>
-        </div>
         <div className="absolute inset-0 bg-gradient-to-tr from-brand-lime/5 to-transparent"></div>
         
         <div className="relative w-64 h-64 z-10 my-4">
@@ -565,12 +553,7 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
       {/* Inputs */}
       <div className="space-y-6 mb-10">
         <div>
-          <div className="flex items-center gap-1.5 mb-2 ml-1">
-            <label className="block font-bold text-xs">Width (cm)</label>
-            <Tooltip content="Measure the width of the glass pane only">
-              <Info size={14} className="text-text-muted cursor-help" />
-            </Tooltip>
-          </div>
+          <label className="block font-bold text-xs mb-2 ml-1">Width (cm)</label>
           <input 
             type="number" 
             value={width}
@@ -580,12 +563,7 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
           />
         </div>
         <div>
-          <div className="flex items-center gap-1.5 mb-2 ml-1">
-            <label className="block font-bold text-xs">Height (cm)</label>
-            <Tooltip content="Measure the height of the glass pane only">
-              <Info size={14} className="text-text-muted cursor-help" />
-            </Tooltip>
-          </div>
+          <label className="block font-bold text-xs mb-2 ml-1">Height (cm)</label>
           <input 
             type="number" 
             value={height}
@@ -598,12 +576,7 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
 
       {/* Counter */}
       <div className="bg-surface-low p-6 rounded-[2rem] mb-10">
-        <div className="flex items-center justify-center gap-1.5 mb-4">
-          <label className="block font-bold text-xs text-center">Number of Windows</label>
-          <Tooltip content="How many identical windows need this film?">
-            <Info size={14} className="text-text-muted cursor-help" />
-          </Tooltip>
-        </div>
+        <label className="block font-bold text-xs mb-4 text-center">Number of Windows</label>
         <div className="flex items-center justify-between bg-surface-bg rounded-full p-2 border border-surface-highest/50">
           <button onClick={() => setWindowCount(Math.max(1, windowCount - 1))} className="w-10 h-10 flex items-center justify-center bg-surface-high rounded-full hover:bg-surface-highest transition-colors active:scale-95">
             <Minus size={18} />
