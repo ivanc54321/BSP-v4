@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'motion/react';
 import { 
   ArrowLeft, X, Home, FileText, User, Settings, 
@@ -316,6 +316,34 @@ function Step1({ onNext, windowCount, setWindowCount }: { onNext: () => void, wi
   const [width, setWidth] = useState('');
   const [height, setHeight] = useState('');
   const [privacyLevel, setPrivacyLevel] = useState(50);
+  const windowRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    setIsDragging(true);
+    updatePrivacyFromPointer(e);
+    // Prevent default to stop scrolling on touch devices while dragging
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (isDragging) {
+      updatePrivacyFromPointer(e);
+    }
+  };
+
+  const handlePointerUp = (e: React.PointerEvent) => {
+    setIsDragging(false);
+    (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+  };
+
+  const updatePrivacyFromPointer = (e: React.PointerEvent) => {
+    if (!windowRef.current) return;
+    const rect = windowRef.current.getBoundingClientRect();
+    const y = e.clientY - rect.top;
+    const percentage = 100 - (y / rect.height) * 100;
+    setPrivacyLevel(Math.max(0, Math.min(100, Math.round(percentage))));
+  };
 
   return (
     <div className="flex flex-col">
@@ -353,68 +381,80 @@ function Step1({ onNext, windowCount, setWindowCount }: { onNext: () => void, wi
         
         <div className="relative w-64 h-64 z-10 my-4">
           {/* Window Frame Outer */}
-          <div className="absolute inset-0 border-[12px] border-[#f0f0f0] rounded-md bg-[#e0e0e0] flex gap-2 shadow-[inset_0_2px_10px_rgba(0,0,0,0.1),0_10px_30px_rgba(0,0,0,0.1)] p-1">
+          <div 
+            ref={windowRef}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerUp}
+            className="absolute inset-0 border-[12px] border-[#ffffff] rounded-lg bg-[#e8e8e8] flex gap-2 shadow-[inset_0_4px_12px_rgba(0,0,0,0.15),0_15px_35px_rgba(0,0,0,0.2)] p-1 cursor-ns-resize touch-none"
+          >
             {/* Left Pane Outer */}
-            <div className="flex-[0.48] bg-[#f8f8f8] rounded-sm border-[4px] border-[#f8f8f8] relative shadow-[inset_0_0_5px_rgba(0,0,0,0.2)] overflow-hidden">
+            <div className="flex-[0.48] bg-[#f8f8f8] rounded-sm border-[4px] border-[#ffffff] relative shadow-[inset_0_0_8px_rgba(0,0,0,0.3)] overflow-hidden pointer-events-none">
               {/* "Outside" Background */}
-              <div className="absolute inset-0 bg-gradient-to-b from-sky-200 to-sky-50">
-                <div className="absolute top-10 left-4 w-12 h-4 bg-white/60 rounded-full blur-sm"></div>
-                <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-emerald-700/20 blur-md"></div>
+              <div className="absolute inset-0 bg-gradient-to-b from-sky-300 to-sky-100">
+                <div className="absolute top-8 left-2 w-16 h-5 bg-white/80 rounded-full blur-[2px]"></div>
+                <div className="absolute top-12 left-12 w-10 h-3 bg-white/60 rounded-full blur-[1px]"></div>
+                <div className="absolute bottom-0 left-0 right-0 h-2/5 bg-gradient-to-t from-emerald-800/40 to-emerald-600/20 blur-sm"></div>
+                {/* Glass Reflection */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/40 pointer-events-none"></div>
+                <div className="absolute -inset-full top-0 left-[-100%] w-[200%] h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -rotate-45 transform translate-x-1/4 pointer-events-none"></div>
               </div>
 
               {/* Frosted Film */}
               <div 
-                className="absolute bottom-0 left-0 right-0 bg-white/40 backdrop-blur-md border-t border-white/60 transition-all duration-200 ease-out flex items-center justify-center"
+                className="absolute bottom-0 left-0 right-0 bg-white/50 backdrop-blur-xl border-t-[1.5px] border-white/80 transition-all duration-75 ease-out flex items-center justify-center shadow-[0_-2px_10px_rgba(255,255,255,0.3)]"
                 style={{ height: `${privacyLevel}%` }}
               >
+                {/* Film Texture */}
+                <div className="absolute inset-0 opacity-30 mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
                 {/* Stripes */}
-                <div className="absolute inset-0 opacity-40" style={{ backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 8px, rgba(255,255,255,0.9) 8px, rgba(255,255,255,0.9) 16px)' }}></div>
+                <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 8px, rgba(255,255,255,0.9) 8px, rgba(255,255,255,0.9) 16px)' }}></div>
                 
                 {/* Privacy Number Badge */}
                 {privacyLevel > 15 && (
-                  <div className="relative z-20 bg-brand-lime/90 text-black text-[10px] font-bold px-2 py-0.5 rounded shadow-sm backdrop-blur-md">
+                  <div className="relative z-20 bg-brand-lime text-black text-[10px] font-extrabold px-2.5 py-1 rounded-md shadow-md backdrop-blur-md border border-brand-lime/50 flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 rounded-full bg-black/80 animate-pulse"></div>
                     {privacyLevel}%
                   </div>
                 )}
               </div>
 
               {/* Handle */}
-              <div className="absolute top-1/2 -right-1 w-2.5 h-12 bg-gradient-to-b from-[#e0e0e0] to-[#c0c0c0] rounded-full -translate-y-1/2 shadow-md z-10 border border-[#a0a0a0]"></div>
+              <div className="absolute top-1/2 -right-1.5 w-3 h-14 bg-gradient-to-b from-[#f0f0f0] via-[#d0d0d0] to-[#b0b0b0] rounded-l-md -translate-y-1/2 shadow-[-2px_0_5px_rgba(0,0,0,0.2)] z-10 border-y border-l border-[#a0a0a0]"></div>
             </div>
 
             {/* Right Pane Outer */}
-            <div className="flex-[0.52] bg-[#f8f8f8] rounded-sm border-[4px] border-[#f8f8f8] relative shadow-[inset_0_0_5px_rgba(0,0,0,0.2)] overflow-hidden">
+            <div className="flex-[0.52] bg-[#f8f8f8] rounded-sm border-[4px] border-[#ffffff] relative shadow-[inset_0_0_8px_rgba(0,0,0,0.3)] overflow-hidden pointer-events-none">
               {/* "Outside" Background */}
-              <div className="absolute inset-0 bg-gradient-to-b from-sky-200 to-sky-50">
-                <div className="absolute top-16 right-6 w-16 h-5 bg-white/60 rounded-full blur-sm"></div>
-                <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-emerald-700/20 blur-md"></div>
+              <div className="absolute inset-0 bg-gradient-to-b from-sky-300 to-sky-100">
+                <div className="absolute top-16 right-6 w-20 h-6 bg-white/80 rounded-full blur-[2px]"></div>
+                <div className="absolute bottom-0 left-0 right-0 h-2/5 bg-gradient-to-t from-emerald-800/40 to-emerald-600/20 blur-sm"></div>
+                {/* Glass Reflection */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/40 pointer-events-none"></div>
+                <div className="absolute -inset-full top-0 left-[-100%] w-[200%] h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -rotate-45 transform translate-x-1/4 pointer-events-none"></div>
               </div>
 
               {/* Frosted Film */}
               <div 
-                className="absolute bottom-0 left-0 right-0 bg-white/40 backdrop-blur-md border-t border-white/60 transition-all duration-200 ease-out flex items-center justify-center"
+                className="absolute bottom-0 left-0 right-0 bg-white/50 backdrop-blur-xl border-t-[1.5px] border-white/80 transition-all duration-75 ease-out flex items-center justify-center shadow-[0_-2px_10px_rgba(255,255,255,0.3)]"
                 style={{ height: `${privacyLevel}%` }}
               >
+                {/* Film Texture */}
+                <div className="absolute inset-0 opacity-30 mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
                 {/* Stripes */}
-                <div className="absolute inset-0 opacity-40" style={{ backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 8px, rgba(255,255,255,0.9) 8px, rgba(255,255,255,0.9) 16px)' }}></div>
-                
-                {/* Privacy Number Badge */}
-                {privacyLevel > 15 && (
-                  <div className="relative z-20 bg-brand-lime/90 text-black text-[10px] font-bold px-2 py-0.5 rounded shadow-sm backdrop-blur-md">
-                    {privacyLevel}%
-                  </div>
-                )}
+                <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 8px, rgba(255,255,255,0.9) 8px, rgba(255,255,255,0.9) 16px)' }}></div>
               </div>
             </div>
           </div>
           
           {/* Height Line */}
-          <div className="absolute -right-8 top-0 bottom-0 flex flex-col items-center">
+          <div className="absolute -right-5 top-0 bottom-0 flex flex-col items-center">
             <div className="w-px h-full bg-brand-lime relative">
               <div className="absolute -top-1 -left-1 w-2 h-2 border-t-2 border-l-2 border-brand-lime rotate-45"></div>
               <div className="absolute -bottom-1 -left-1 w-2 h-2 border-b-2 border-l-2 border-brand-lime -rotate-45"></div>
             </div>
-            <div className="absolute top-1/2 -translate-y-1/2 bg-surface-bg px-2 py-1 rounded text-[8px] font-bold text-brand-dark shadow-sm whitespace-nowrap">
+            <div className="absolute top-1/2 -translate-y-1/2 bg-surface-bg px-1.5 py-1 rounded text-[8px] font-bold text-brand-dark shadow-sm whitespace-nowrap z-20">
               {height ? `${height} cm` : 'Height'}
             </div>
           </div>
