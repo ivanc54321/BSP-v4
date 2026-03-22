@@ -110,6 +110,35 @@ function NavItem({ icon, label, active = false, onClick }: { icon: React.ReactNo
   );
 }
 
+function Tooltip({ children, content }: { children: React.ReactNode, content: string }) {
+  const [isVisible, setIsVisible] = useState(false);
+  
+  return (
+    <div 
+      className="relative inline-flex items-center"
+      onMouseEnter={() => setIsVisible(true)}
+      onMouseLeave={() => setIsVisible(false)}
+      onFocus={() => setIsVisible(true)}
+      onBlur={() => setIsVisible(false)}
+    >
+      {children}
+      <AnimatePresence>
+        {isVisible && (
+          <motion.div 
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 5 }}
+            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-brand-dark text-white text-xs rounded-lg whitespace-nowrap z-50 pointer-events-none shadow-xl border border-white/10"
+          >
+            {content}
+            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-brand-dark"></div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 function ProgressBar({ step, total, label }: { step: number, total: number, label: string }) {
   const percentage = (step / total) * 100;
   return (
@@ -391,6 +420,9 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
           <label className="font-bold text-xs text-text-main flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-brand-lime"></div>
             Privacy Film Height
+            <Tooltip content="Adjust how high the frosted film covers the window">
+              <Info size={14} className="text-text-muted cursor-help" />
+            </Tooltip>
           </label>
           <span className="text-[10px] font-bold text-brand-dark bg-brand-lime/20 px-2 py-1 rounded-md">{privacyLevel}%</span>
         </div>
@@ -406,6 +438,13 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
 
       {/* Diagram Area */}
       <div className="bg-surface-low rounded-[2rem] p-8 mb-12 flex justify-center items-center relative overflow-hidden">
+        <div className="absolute top-4 right-4 z-20">
+          <Tooltip content="You can also drag up and down on the window to adjust privacy height">
+            <div className="bg-surface-highest/50 p-2 rounded-full text-text-muted hover:text-text-main transition-colors cursor-help">
+              <Info size={16} />
+            </div>
+          </Tooltip>
+        </div>
         <div className="absolute inset-0 bg-gradient-to-tr from-brand-lime/5 to-transparent"></div>
         
         <div className="relative w-64 h-64 z-10 my-4">
@@ -434,14 +473,22 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
               </div>
 
               {/* Frosted Film */}
-              <div 
-                className="absolute bottom-0 left-0 right-0 bg-white/10 backdrop-blur-md border-t-[1.5px] border-white/80 transition-all duration-75 ease-out flex items-center justify-center shadow-[0_-2px_10px_rgba(255,255,255,0.3)]"
-                style={{ height: `${privacyLevel}%` }}
+              <motion.div 
+                className="absolute bottom-0 left-0 right-0 bg-white/10 backdrop-blur-md border-t-[1.5px] border-white/80 flex items-center justify-center shadow-[0_-2px_10px_rgba(255,255,255,0.3)] overflow-hidden"
+                animate={{ height: `${privacyLevel}%` }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
               >
                 {/* Film Texture */}
                 <div className="absolute inset-0 opacity-10 mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
                 {/* Stripes */}
                 <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 8px, rgba(255,255,255,0.9) 8px, rgba(255,255,255,0.9) 16px)' }}></div>
+                
+                {/* Shimmer Effect */}
+                <motion.div 
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12"
+                  animate={{ x: ['-200%', '200%'] }}
+                  transition={{ repeat: Infinity, duration: 3, ease: "linear", repeatDelay: 2 }}
+                />
                 
                 {/* Privacy Number Badge */}
                 {privacyLevel > 15 && (
@@ -450,7 +497,7 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
                     {privacyLevel}%
                   </div>
                 )}
-              </div>
+              </motion.div>
 
               {/* Handle */}
               <div className="absolute top-1/2 -right-1.5 w-3 h-14 bg-gradient-to-b from-[#f0f0f0] via-[#d0d0d0] to-[#b0b0b0] rounded-l-md -translate-y-1/2 shadow-[-2px_0_5px_rgba(0,0,0,0.2)] z-10 border-y border-l border-[#a0a0a0]"></div>
@@ -471,15 +518,23 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
               </div>
 
               {/* Frosted Film */}
-              <div 
-                className="absolute bottom-0 left-0 right-0 bg-white/10 backdrop-blur-md border-t-[1.5px] border-white/80 transition-all duration-75 ease-out flex items-center justify-center shadow-[0_-2px_10px_rgba(255,255,255,0.3)]"
-                style={{ height: `${privacyLevel}%` }}
+              <motion.div 
+                className="absolute bottom-0 left-0 right-0 bg-white/10 backdrop-blur-md border-t-[1.5px] border-white/80 flex items-center justify-center shadow-[0_-2px_10px_rgba(255,255,255,0.3)] overflow-hidden"
+                animate={{ height: `${privacyLevel}%` }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
               >
                 {/* Film Texture */}
                 <div className="absolute inset-0 opacity-10 mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
                 {/* Stripes */}
                 <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 8px, rgba(255,255,255,0.9) 8px, rgba(255,255,255,0.9) 16px)' }}></div>
-              </div>
+                
+                {/* Shimmer Effect */}
+                <motion.div 
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12"
+                  animate={{ x: ['-200%', '200%'] }}
+                  transition={{ repeat: Infinity, duration: 3, ease: "linear", repeatDelay: 2, delay: 0.5 }}
+                />
+              </motion.div>
             </div>
           </div>
           
@@ -510,7 +565,12 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
       {/* Inputs */}
       <div className="space-y-6 mb-10">
         <div>
-          <label className="block font-bold text-xs mb-2 ml-1">Width (cm)</label>
+          <div className="flex items-center gap-1.5 mb-2 ml-1">
+            <label className="block font-bold text-xs">Width (cm)</label>
+            <Tooltip content="Measure the width of the glass pane only">
+              <Info size={14} className="text-text-muted cursor-help" />
+            </Tooltip>
+          </div>
           <input 
             type="number" 
             value={width}
@@ -520,7 +580,12 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
           />
         </div>
         <div>
-          <label className="block font-bold text-xs mb-2 ml-1">Height (cm)</label>
+          <div className="flex items-center gap-1.5 mb-2 ml-1">
+            <label className="block font-bold text-xs">Height (cm)</label>
+            <Tooltip content="Measure the height of the glass pane only">
+              <Info size={14} className="text-text-muted cursor-help" />
+            </Tooltip>
+          </div>
           <input 
             type="number" 
             value={height}
@@ -533,7 +598,12 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
 
       {/* Counter */}
       <div className="bg-surface-low p-6 rounded-[2rem] mb-10">
-        <label className="block font-bold text-xs mb-4 text-center">Number of Windows</label>
+        <div className="flex items-center justify-center gap-1.5 mb-4">
+          <label className="block font-bold text-xs text-center">Number of Windows</label>
+          <Tooltip content="How many identical windows need this film?">
+            <Info size={14} className="text-text-muted cursor-help" />
+          </Tooltip>
+        </div>
         <div className="flex items-center justify-between bg-surface-bg rounded-full p-2 border border-surface-highest/50">
           <button onClick={() => setWindowCount(Math.max(1, windowCount - 1))} className="w-10 h-10 flex items-center justify-center bg-surface-high rounded-full hover:bg-surface-highest transition-colors active:scale-95">
             <Minus size={18} />
