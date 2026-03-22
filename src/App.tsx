@@ -151,7 +151,7 @@ function Step0({ onNext }: { onNext: () => void }) {
   return (
     <div className="flex flex-col -mt-8 -mx-6">
       {/* Hero Section */}
-      <div className="relative bg-brand-lime pt-8 pb-16 px-6 rounded-b-[2rem] overflow-hidden mb-6 shadow-lg min-h-[260px] flex flex-col justify-start">
+      <div className="relative bg-brand-lime pt-16 pb-28 px-6 rounded-b-[2.5rem] overflow-hidden mb-8 shadow-lg min-h-[400px] flex flex-col justify-start">
         {/* Background Image Slideshow */}
         <div className="absolute inset-0 z-0 bg-black">
           <AnimatePresence mode="popLayout">
@@ -227,7 +227,7 @@ function Step0({ onNext }: { onNext: () => void }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.5 }}
-          className="font-headline text-3xl font-extrabold text-center mb-10 leading-tight text-white"
+          className="font-headline text-xl font-extrabold text-center mb-8 leading-tight text-white"
         >
           Simply Pick Your Style,<br/>
           <span className="text-brand-lime">We Take Care of the Rest.</span>
