@@ -391,9 +391,9 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="mb-6"
+        className="mb-4"
       >
-        <h1 className="font-headline text-2xl md:text-3xl font-extrabold text-text-main tracking-tight mb-1.5">
+        <h1 className="font-headline text-2xl md:text-3xl font-extrabold text-text-main tracking-tight mb-1">
           Window <span className="text-brand-lime">Dimensions</span>
         </h1>
         <div className="relative h-[40px]">
@@ -413,8 +413,8 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
       </motion.div>
 
       {/* Privacy Slider */}
-      <div className="mb-8 bg-surface-low p-5 rounded-2xl border border-surface-highest/30 shadow-sm">
-        <div className="flex justify-between items-center mb-3">
+      <div className="mb-6 bg-surface-low p-4 rounded-2xl border border-surface-highest/30 shadow-sm">
+        <div className="flex justify-between items-center mb-2">
           <label className="font-bold text-xs text-text-main flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-brand-lime"></div>
             Privacy Film Height
@@ -432,7 +432,7 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
       </div>
 
       {/* Diagram Area */}
-      <div className="bg-surface-low rounded-[2rem] p-8 mb-12 flex justify-center items-center relative overflow-hidden">
+      <div className="bg-surface-low rounded-[2rem] p-6 mb-8 flex justify-center items-center relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-tr from-brand-lime/5 to-transparent"></div>
         
         <div className="relative w-64 h-64 z-10 my-4">
