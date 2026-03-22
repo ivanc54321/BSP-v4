@@ -135,38 +135,35 @@ function Step0({ onNext }: { onNext: () => void }) {
   return (
     <div className="flex flex-col -mt-8 -mx-6">
       {/* Hero Section */}
-      <div className="relative bg-brand-lime pt-4 pb-10 px-6 rounded-b-[2.5rem] overflow-hidden mb-8 shadow-lg">
+      <div className="relative bg-brand-lime pt-12 pb-24 px-6 rounded-b-[2.5rem] overflow-hidden mb-8 shadow-lg min-h-[320px] flex flex-col justify-start">
+        {/* Background Image */}
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="relative z-10"
-        >
-          <h1 className="font-headline text-3xl font-black text-black tracking-tight leading-[1.05] mb-2 uppercase">
-            Static Glazing<br/>
-            <span className="text-white drop-shadow-sm">Installation</span>
-          </h1>
-          <h2 className="font-headline text-xs font-bold text-black/70 tracking-widest uppercase mb-4">
-            Window Privacy Film
-          </h2>
-        </motion.div>
-        
-        {/* Van Image */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
+          initial={{ opacity: 0, scale: 1.05 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-          className="relative z-10 w-[115%] -ml-[7%] drop-shadow-2xl"
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="absolute inset-0 z-0"
         >
-          <img src="https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80&w=800" alt="Brightside Van" className="w-full h-40 object-cover rounded-xl" style={{ filter: 'sepia(1) hue-rotate(40deg) saturate(3) brightness(1.1)' }} />
-          <div className="absolute inset-0 flex items-center justify-center opacity-90 mix-blend-overlay">
-            <div className="font-headline font-black text-white text-2xl tracking-widest">BRIGHTSIDE</div>
-          </div>
+          <img src="https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80&w=800" alt="Brightside Van" className="w-full h-full object-cover opacity-50 mix-blend-multiply" style={{ filter: 'grayscale(100%) contrast(1.2)' }} />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/20 to-brand-lime/40"></div>
         </motion.div>
 
         {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, black 1px, transparent 0)', backgroundSize: '16px 16px' }}></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/5 to-transparent"></div>
+        <div className="absolute inset-0 z-0 opacity-20 mix-blend-overlay" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, black 1px, transparent 0)', backgroundSize: '16px 16px' }}></div>
+
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+          className="relative z-10"
+        >
+          <h1 className="font-headline text-4xl font-black text-white tracking-tight leading-[1.05] mb-2 uppercase drop-shadow-md">
+            Static Glazing<br/>
+            <span className="text-brand-lime drop-shadow-sm">Installation</span>
+          </h1>
+          <h2 className="font-headline text-sm font-bold text-white/80 tracking-widest uppercase mb-2 drop-shadow-md">
+            Window Privacy Film
+          </h2>
+        </motion.div>
       </div>
 
       {/* Floating Button */}
@@ -174,7 +171,7 @@ function Step0({ onNext }: { onNext: () => void }) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.4, ease: "easeOut" }}
-        className="flex justify-center -mt-10 relative z-20 mb-12"
+        className="flex justify-center -mt-16 relative z-20 mb-12"
       >
         <motion.button 
           onClick={onNext} 
@@ -318,6 +315,20 @@ function Step1({ onNext, windowCount, setWindowCount }: { onNext: () => void, wi
   const [privacyLevel, setPrivacyLevel] = useState(50);
   const windowRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [tipIndex, setTipIndex] = useState(0);
+
+  const tips = [
+    "Enter the approximate measurements for your two-pane window replacement. Accuracy helps us provide a better estimate.",
+    "Measure from the inside edge of the window frame for the most accurate dimensions.",
+    "Don't worry if it's not perfect—our installers will do a final measure before production."
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTipIndex((prev) => (prev + 1) % tips.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handlePointerDown = (e: React.PointerEvent) => {
     setIsDragging(true);
@@ -349,12 +360,30 @@ function Step1({ onNext, windowCount, setWindowCount }: { onNext: () => void, wi
     <div className="flex flex-col">
       <ProgressBar step={1} total={3} label="33% Completed" />
       
-      <h1 className="font-headline text-3xl md:text-4xl font-extrabold text-text-main tracking-tight leading-tight mb-4">
-        Window<br/>Dimensions
-      </h1>
-      <p className="text-text-muted text-base mb-8 leading-relaxed max-w-md">
-        Enter the approximate measurements for your two-pane window replacement. Accuracy helps us provide a better estimate.
-      </p>
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="mb-6"
+      >
+        <h1 className="font-headline text-2xl md:text-3xl font-extrabold text-text-main tracking-tight mb-1.5">
+          Window <span className="text-brand-lime">Dimensions</span>
+        </h1>
+        <div className="relative h-[40px]">
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={tipIndex}
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -5 }}
+              transition={{ duration: 0.3 }}
+              className="text-text-muted text-sm leading-snug max-w-md absolute inset-0"
+            >
+              {tips[tipIndex]}
+            </motion.p>
+          </AnimatePresence>
+        </div>
+      </motion.div>
 
       {/* Privacy Slider */}
       <div className="mb-8 bg-surface-low p-5 rounded-2xl border border-surface-highest/30 shadow-sm">
