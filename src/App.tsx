@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'motion/react';
 import { 
   ArrowLeft, X, Home, FileText, User, Settings, 
   Info, Lightbulb, ShieldCheck, Minus, Plus, 
@@ -11,6 +11,7 @@ import {
 export default function App() {
   const [step, setStep] = useState(0);
   const [isDark, setIsDark] = useState(true);
+  const [windowCount, setWindowCount] = useState(1);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -24,7 +25,7 @@ export default function App() {
     }
   }, [isDark]);
 
-  const nextStep = () => setStep(s => Math.min(4, s + 1));
+  const nextStep = () => setStep(s => Math.min(3, s + 1));
   const prevStep = () => setStep(s => Math.max(1, s - 1));
 
   return (
@@ -70,7 +71,7 @@ export default function App() {
           )}
           {step === 1 && (
             <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
-              <Step1 onNext={nextStep} />
+              <Step1 onNext={nextStep} windowCount={windowCount} setWindowCount={setWindowCount} />
             </motion.div>
           )}
           {step === 2 && (
@@ -79,13 +80,8 @@ export default function App() {
             </motion.div>
           )}
           {step === 3 && (
-            <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
-              <Step3 onNext={nextStep} />
-            </motion.div>
-          )}
-          {step === 4 && (
-            <motion.div key="step4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
-              <Step4 />
+            <motion.div key="step3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+              <Step3 windowCount={windowCount} />
             </motion.div>
           )}
         </AnimatePresence>
@@ -294,21 +290,7 @@ function Step0({ onNext }: { onNext: () => void }) {
             transition={{ duration: 0.5, delay: 1.0 }}
             className="relative z-10 flex items-start gap-5"
           >
-            <div className="w-10 h-10 rounded-full bg-surface-high border-2 border-brand-lime flex items-center justify-center font-headline font-bold text-brand-lime shrink-0 shadow-[0_0_15px_rgba(180,207,82,0.15)]">3</div>
-            <div className="pt-2">
-              <p className="font-bold text-base text-white mb-1">PRIVACY LEVEL</p>
-              <p className="text-sm text-text-muted">Half, Full, Custom</p>
-            </div>
-          </motion.div>
-
-          {/* Step 4 */}
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 1.1 }}
-            className="relative z-10 flex items-start gap-5"
-          >
-            <div className="w-10 h-10 rounded-full bg-brand-lime border-2 border-brand-lime flex items-center justify-center font-headline font-bold text-black shrink-0 shadow-[0_0_15px_rgba(180,207,82,0.3)]">4</div>
+            <div className="w-10 h-10 rounded-full bg-brand-lime border-2 border-brand-lime flex items-center justify-center font-headline font-bold text-black shrink-0 shadow-[0_0_15px_rgba(180,207,82,0.3)]">3</div>
             <div className="pt-2">
               <p className="font-bold text-base text-white mb-1">CALCULATE PRICE</p>
               <p className="text-sm text-text-muted">Instant, Free Quote</p>
@@ -330,15 +312,14 @@ function Step0({ onNext }: { onNext: () => void }) {
   );
 }
 
-function Step1({ onNext }: { onNext: () => void }) {
-  const [count, setCount] = useState(1);
+function Step1({ onNext, windowCount, setWindowCount }: { onNext: () => void, windowCount: number, setWindowCount: (c: number) => void }) {
   const [width, setWidth] = useState('');
   const [height, setHeight] = useState('');
   const [privacyLevel, setPrivacyLevel] = useState(50);
 
   return (
     <div className="flex flex-col">
-      <ProgressBar step={1} total={5} label="20% Completed" />
+      <ProgressBar step={1} total={3} label="33% Completed" />
       
       <h1 className="font-headline text-3xl md:text-4xl font-extrabold text-text-main tracking-tight leading-tight mb-4">
         Window<br/>Dimensions
@@ -383,11 +364,18 @@ function Step1({ onNext }: { onNext: () => void }) {
 
               {/* Frosted Film */}
               <div 
-                className="absolute bottom-0 left-0 right-0 bg-white/40 backdrop-blur-md border-t border-white/60 transition-all duration-200 ease-out"
+                className="absolute bottom-0 left-0 right-0 bg-white/40 backdrop-blur-md border-t border-white/60 transition-all duration-200 ease-out flex items-center justify-center"
                 style={{ height: `${privacyLevel}%` }}
               >
                 {/* Stripes */}
                 <div className="absolute inset-0 opacity-40" style={{ backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 8px, rgba(255,255,255,0.9) 8px, rgba(255,255,255,0.9) 16px)' }}></div>
+                
+                {/* Privacy Number Badge */}
+                {privacyLevel > 15 && (
+                  <div className="relative z-20 bg-brand-lime/90 text-black text-[10px] font-bold px-2 py-0.5 rounded shadow-sm backdrop-blur-md">
+                    {privacyLevel}%
+                  </div>
+                )}
               </div>
 
               {/* Handle */}
@@ -404,11 +392,18 @@ function Step1({ onNext }: { onNext: () => void }) {
 
               {/* Frosted Film */}
               <div 
-                className="absolute bottom-0 left-0 right-0 bg-white/40 backdrop-blur-md border-t border-white/60 transition-all duration-200 ease-out"
+                className="absolute bottom-0 left-0 right-0 bg-white/40 backdrop-blur-md border-t border-white/60 transition-all duration-200 ease-out flex items-center justify-center"
                 style={{ height: `${privacyLevel}%` }}
               >
                 {/* Stripes */}
                 <div className="absolute inset-0 opacity-40" style={{ backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 8px, rgba(255,255,255,0.9) 8px, rgba(255,255,255,0.9) 16px)' }}></div>
+                
+                {/* Privacy Number Badge */}
+                {privacyLevel > 15 && (
+                  <div className="relative z-20 bg-brand-lime/90 text-black text-[10px] font-bold px-2 py-0.5 rounded shadow-sm backdrop-blur-md">
+                    {privacyLevel}%
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -465,11 +460,11 @@ function Step1({ onNext }: { onNext: () => void }) {
       <div className="bg-surface-low p-6 rounded-[2rem] mb-10">
         <label className="block font-bold text-xs mb-4 text-center">Number of Windows</label>
         <div className="flex items-center justify-between bg-surface-bg rounded-full p-2 border border-surface-highest/50">
-          <button onClick={() => setCount(Math.max(1, count - 1))} className="w-10 h-10 flex items-center justify-center bg-surface-high rounded-full hover:bg-surface-highest transition-colors active:scale-95">
+          <button onClick={() => setWindowCount(Math.max(1, windowCount - 1))} className="w-10 h-10 flex items-center justify-center bg-surface-high rounded-full hover:bg-surface-highest transition-colors active:scale-95">
             <Minus size={18} />
           </button>
-          <span className="font-headline text-lg font-extrabold">{count}</span>
-          <button onClick={() => setCount(count + 1)} className="w-10 h-10 flex items-center justify-center bg-brand-lime rounded-full hover:bg-[#b4cf52] transition-colors active:scale-95 text-black">
+          <span className="font-headline text-lg font-extrabold">{windowCount}</span>
+          <button onClick={() => setWindowCount(windowCount + 1)} className="w-10 h-10 flex items-center justify-center bg-brand-lime rounded-full hover:bg-[#b4cf52] transition-colors active:scale-95 text-black">
             <Plus size={18} />
           </button>
         </div>
@@ -506,7 +501,7 @@ function InfoCard({ icon, title, desc }: { icon: React.ReactNode, title: string,
 function Step2({ onNext }: { onNext: () => void }) {
   return (
     <div className="flex flex-col">
-      <ProgressBar step={2} total={5} label="Selection" />
+      <ProgressBar step={2} total={3} label="66% Completed" />
       
       <div className="mb-10">
         <div className="inline-block px-3 py-1 bg-brand-lime/10 rounded-lg mb-4">
@@ -571,91 +566,16 @@ function DesignCard({ title, desc, imgUrl, popular, onSelect }: { title: string,
   );
 }
 
-function Step3({ onNext }: { onNext: () => void }) {
-  const [selected, setSelected] = useState('Full');
+function Step3({ windowCount }: { windowCount: number }) {
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, Math.round);
+  const totalPrice = windowCount * 30;
 
-  return (
-    <div className="flex flex-col">
-      <ProgressBar step={3} total={5} label="60% Complete" />
-      
-      <div className="mb-10">
-        <h1 className="font-headline text-3xl md:text-4xl font-extrabold text-text-main tracking-tight leading-tight mb-6">
-          Select Privacy Level
-        </h1>
-        <p className="text-text-muted text-base leading-relaxed max-w-md border-l-4 border-brand-lime pl-5 py-1">
-          Choose the architectural density that best fits your landscape and desired level of seclusion.
-        </p>
-      </div>
+  useEffect(() => {
+    const controls = animate(count, totalPrice, { duration: 2, ease: "easeOut" });
+    return () => controls.stop();
+  }, [totalPrice]);
 
-      <div className="space-y-5 mb-12">
-        <PrivacyOption 
-          id="Half" 
-          title="Half" 
-          desc="Spaced pickets for a breezy, open aesthetic that defines boundaries." 
-          icon={<EyeOff size={24} strokeWidth={1.5} />} 
-          selected={selected === 'Half'} 
-          onClick={() => setSelected('Half')} 
-        />
-        <PrivacyOption 
-          id="Full" 
-          title="Full" 
-          desc="Maximum seclusion with tongue-and-groove boards for total peace." 
-          icon={<Shield size={24} strokeWidth={1.5} />} 
-          selected={selected === 'Full'} 
-          onClick={() => setSelected('Full')} 
-        />
-        <PrivacyOption 
-          id="Custom" 
-          title="Custom" 
-          desc="Mixed heights and lattice top options for a bespoke architectural look." 
-          icon={<Sliders size={24} strokeWidth={1.5} />} 
-          selected={selected === 'Custom'} 
-          onClick={() => setSelected('Custom')} 
-        />
-      </div>
-
-      {/* Preview Image */}
-      <div className="relative rounded-[2rem] overflow-hidden aspect-[21/9] bg-surface-highest mb-12 shadow-inner">
-        <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800" alt="Preview" className="w-full h-full object-cover mix-blend-multiply opacity-80" />
-        <div className="absolute -bottom-2 right-4 md:right-8 p-6 bg-surface-bg/95 backdrop-blur-xl rounded-2xl shadow-xl max-w-[280px] border-r-4 border-b-4 border-brand-lime">
-          <p className="text-[8px] font-bold text-brand-dark tracking-widest uppercase mb-2">Preview</p>
-          <p className="text-xs text-text-main font-medium italic leading-relaxed">"Full privacy creates a modern sanctuary feel."</p>
-        </div>
-      </div>
-
-      <button onClick={onNext} className="w-full bg-brand-lime text-black font-headline font-extrabold text-base py-5 rounded-full shadow-[0_12px_24px_-8px_rgba(198,225,90,0.6)] hover:bg-[#b4cf52] hover:-translate-y-0.5 transition-all active:scale-95 flex items-center justify-center gap-2 mb-16">
-        Calculate Price <ArrowRight size={20} />
-      </button>
-    </div>
-  );
-}
-
-function PrivacyOption({ id, title, desc, icon, selected, onClick }: { id: string, title: string, desc: string, icon: React.ReactNode, selected: boolean, onClick: () => void }) {
-  return (
-    <button 
-      onClick={onClick}
-      className={`w-full flex flex-col items-start p-8 rounded-[2rem] text-left transition-all duration-300 relative overflow-hidden ${
-        selected 
-          ? 'bg-brand-lime ring-4 ring-brand-lime/30 shadow-xl shadow-brand-lime/20 scale-[1.02]' 
-          : 'bg-surface-low hover:bg-surface-high'
-      }`}
-    >
-      <div className={`mb-4 p-3 rounded-full ${selected ? 'bg-black/10 text-black' : 'bg-surface-bg text-brand-dark'}`}>
-        {icon}
-      </div>
-      <h3 className={`font-headline text-lg font-bold mb-1 ${selected ? 'text-black' : 'text-text-main'}`}>{title}</h3>
-      <p className={`text-[10px] leading-relaxed max-w-[85%] ${selected ? 'text-black/80' : 'text-text-muted'}`}>{desc}</p>
-      
-      <div className={`absolute top-8 right-8 h-6 w-6 rounded-full flex items-center justify-center transition-colors ${
-        selected ? 'bg-black' : 'border-2 border-surface-highest'
-      }`}>
-        {selected && <Check size={14} className="text-brand-lime" strokeWidth={3} />}
-      </div>
-    </button>
-  );
-}
-
-function Step4() {
   return (
     <div className="flex flex-col -mt-8 -mx-6">
       {/* Hero Image */}
@@ -678,7 +598,14 @@ function Step4() {
       <div className="px-6 pt-10 pb-20">
         <div className="mb-8">
           <span className="font-bold text-brand-lime tracking-[0.2em] uppercase text-[8px] mb-2 block">Final Quote</span>
-          <h1 className="font-headline text-4xl font-extrabold tracking-tighter text-text-main mb-3">Total Price: £30</h1>
+          <motion.h1 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
+            className="font-headline text-4xl font-extrabold tracking-tighter text-text-main mb-3"
+          >
+            Total Price: £<motion.span>{rounded}</motion.span>
+          </motion.h1>
           <p className="text-sm text-text-muted flex items-start gap-2 leading-relaxed">
             <Info size={20} className="text-brand-lime shrink-0 mt-0.5" />
             Includes film and installation estimate
