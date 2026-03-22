@@ -135,18 +135,18 @@ function Step0({ onNext }: { onNext: () => void }) {
   return (
     <div className="flex flex-col -mt-8 -mx-6">
       {/* Hero Section */}
-      <div className="relative bg-brand-lime pt-12 pb-28 px-6 rounded-b-[2.5rem] overflow-hidden mb-8 shadow-lg">
+      <div className="relative bg-brand-lime pt-4 pb-10 px-6 rounded-b-[2.5rem] overflow-hidden mb-8 shadow-lg">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="relative z-10"
         >
-          <h1 className="font-headline text-4xl font-black text-black tracking-tight leading-[1.05] mb-3 uppercase">
+          <h1 className="font-headline text-3xl font-black text-black tracking-tight leading-[1.05] mb-2 uppercase">
             Static Glazing<br/>
             <span className="text-white drop-shadow-sm">Installation</span>
           </h1>
-          <h2 className="font-headline text-sm font-bold text-black/70 tracking-widest uppercase mb-6">
+          <h2 className="font-headline text-xs font-bold text-black/70 tracking-widest uppercase mb-4">
             Window Privacy Film
           </h2>
         </motion.div>
@@ -156,9 +156,9 @@ function Step0({ onNext }: { onNext: () => void }) {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-          className="relative z-10 w-[115%] -ml-[7%] mt-2 drop-shadow-2xl"
+          className="relative z-10 w-[115%] -ml-[7%] drop-shadow-2xl"
         >
-          <img src="https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80&w=800" alt="Brightside Van" className="w-full h-auto object-cover rounded-xl" style={{ filter: 'sepia(1) hue-rotate(40deg) saturate(3) brightness(1.1)' }} />
+          <img src="https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80&w=800" alt="Brightside Van" className="w-full h-40 object-cover rounded-xl" style={{ filter: 'sepia(1) hue-rotate(40deg) saturate(3) brightness(1.1)' }} />
           <div className="absolute inset-0 flex items-center justify-center opacity-90 mix-blend-overlay">
             <div className="font-headline font-black text-white text-2xl tracking-widest">BRIGHTSIDE</div>
           </div>
@@ -174,7 +174,7 @@ function Step0({ onNext }: { onNext: () => void }) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.4, ease: "easeOut" }}
-        className="flex justify-center -mt-20 relative z-20 mb-12"
+        className="flex justify-center -mt-10 relative z-20 mb-12"
       >
         <motion.button 
           onClick={onNext} 
