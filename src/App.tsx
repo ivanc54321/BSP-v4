@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 
 export default function App() {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
   const [isDark, setIsDark] = useState(true);
 
   useEffect(() => {
@@ -31,7 +31,7 @@ export default function App() {
     <div className="min-h-screen bg-surface-bg text-text-main font-body pb-32 overflow-x-hidden transition-colors duration-300">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-surface-bg/90 backdrop-blur-xl px-6 py-4 flex items-center justify-between transition-colors duration-300">
-        <button onClick={prevStep} className="text-brand-dark hover:opacity-70 transition-opacity p-2 -ml-2">
+        <button onClick={prevStep} className={`text-brand-dark hover:opacity-70 transition-opacity p-2 -ml-2 ${step === 0 ? 'invisible' : ''}`}>
           <ArrowLeft size={20} />
         </button>
         <div className="font-headline font-extrabold text-base flex items-center gap-2 text-text-main tracking-tight">
@@ -49,7 +49,11 @@ export default function App() {
             {isDark ? <Sun size={20} /> : <Moon size={20} />}
           </button>
           <button className="text-brand-dark hover:opacity-70 transition-opacity p-2">
-            <X size={20} />
+            <div className="flex flex-col gap-1.5 w-6">
+              <div className="h-0.5 w-full bg-current rounded-full"></div>
+              <div className="h-0.5 w-full bg-current rounded-full"></div>
+              <div className="h-0.5 w-full bg-current rounded-full"></div>
+            </div>
           </button>
         </div>
       </header>
@@ -59,6 +63,11 @@ export default function App() {
 
       <main className="max-w-2xl mx-auto px-6 pt-8">
         <AnimatePresence mode="wait">
+          {step === 0 && (
+            <motion.div key="step0" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
+              <Step0 onNext={nextStep} />
+            </motion.div>
+          )}
           {step === 1 && (
             <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
               <Step1 onNext={nextStep} />
@@ -84,8 +93,8 @@ export default function App() {
 
       {/* Bottom Nav */}
       <nav className="fixed bottom-0 left-0 right-0 bg-surface-bg/80 backdrop-blur-2xl border-t border-surface-highest/50 px-6 py-4 flex justify-between items-center z-50 rounded-t-[2rem] shadow-[0_-20px_40px_rgba(46,47,44,0.03)] pb-8">
-        <NavItem icon={<Home size={24} strokeWidth={1.5} />} label="Home" />
-        <NavItem icon={<FileText size={24} strokeWidth={2} />} label="Quotes" active />
+        <NavItem icon={<Home size={24} strokeWidth={1.5} />} label="Home" active={step === 0} onClick={() => setStep(0)} />
+        <NavItem icon={<FileText size={24} strokeWidth={2} />} label="Quotes" active={step > 0} onClick={() => setStep(1)} />
         <NavItem icon={<User size={24} strokeWidth={1.5} />} label="Profile" />
         <NavItem icon={<Settings size={24} strokeWidth={1.5} />} label="Settings" />
       </nav>
@@ -93,9 +102,9 @@ export default function App() {
   );
 }
 
-function NavItem({ icon, label, active = false }: { icon: React.ReactNode, label: string, active?: boolean }) {
+function NavItem({ icon, label, active = false, onClick }: { icon: React.ReactNode, label: string, active?: boolean, onClick?: () => void }) {
   return (
-    <button className={`flex flex-col items-center gap-1.5 transition-all duration-300 ${active ? 'text-black scale-105' : 'text-text-muted hover:text-black'}`}>
+    <button onClick={onClick} className={`flex flex-col items-center gap-1.5 transition-all duration-300 ${active ? 'text-black scale-105' : 'text-text-muted hover:text-black'}`}>
       <div className={`transition-all duration-300 ${active ? 'bg-brand-lime p-3 rounded-2xl shadow-lg shadow-brand-lime/20' : 'p-2'}`}>
         {icon}
       </div>
@@ -125,6 +134,201 @@ function ProgressBar({ step, total, label }: { step: number, total: number, labe
 }
 
 // --- STEPS ---
+
+function Step0({ onNext }: { onNext: () => void }) {
+  return (
+    <div className="flex flex-col -mt-8 -mx-6">
+      {/* Hero Section */}
+      <div className="relative bg-brand-lime pt-12 pb-28 px-6 rounded-b-[2.5rem] overflow-hidden mb-8 shadow-lg">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="relative z-10"
+        >
+          <h1 className="font-headline text-4xl font-black text-black tracking-tight leading-[1.05] mb-3 uppercase">
+            Static Glazing<br/>
+            <span className="text-white drop-shadow-sm">Installation</span>
+          </h1>
+          <h2 className="font-headline text-sm font-bold text-black/70 tracking-widest uppercase mb-6">
+            Window Privacy Film
+          </h2>
+        </motion.div>
+        
+        {/* Van Image */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+          className="relative z-10 w-[115%] -ml-[7%] mt-2 drop-shadow-2xl"
+        >
+          <img src="https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80&w=800" alt="Brightside Van" className="w-full h-auto object-cover rounded-xl" style={{ filter: 'sepia(1) hue-rotate(40deg) saturate(3) brightness(1.1)' }} />
+          <div className="absolute inset-0 flex items-center justify-center opacity-90 mix-blend-overlay">
+            <div className="font-headline font-black text-white text-2xl tracking-widest">BRIGHTSIDE</div>
+          </div>
+        </motion.div>
+
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, black 1px, transparent 0)', backgroundSize: '16px 16px' }}></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/5 to-transparent"></div>
+      </div>
+
+      {/* Floating Button */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.4, ease: "easeOut" }}
+        className="flex justify-center -mt-20 relative z-20 mb-12"
+      >
+        <motion.button 
+          onClick={onNext} 
+          animate={{ 
+            scale: [1, 1.05, 1],
+            boxShadow: [
+              "0px 8px 30px rgba(180,207,82,0.3)",
+              "0px 15px 40px rgba(180,207,82,0.6)",
+              "0px 8px 30px rgba(180,207,82,0.3)"
+            ]
+          }}
+          transition={{ 
+            duration: 2, 
+            repeat: Infinity, 
+            ease: "easeInOut" 
+          }}
+          className="bg-brand-lime text-black font-headline font-extrabold text-lg py-4 px-10 rounded-2xl hover:bg-[#b4cf52] border border-white/20 flex items-center gap-2"
+        >
+          Start Your Quote <ArrowRight size={20} />
+        </motion.button>
+      </motion.div>
+
+      <div className="px-6 pb-20">
+        <motion.h3 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="font-headline text-3xl font-extrabold text-center mb-10 leading-tight text-white"
+        >
+          Simply Pick Your Style,<br/>
+          <span className="text-brand-lime">We Take Care of the Rest.</span>
+        </motion.h3>
+
+        {/* How it Works Card */}
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}
+          className="mb-12 bg-surface-low p-6 rounded-3xl border border-surface-highest/50 shadow-sm"
+        >
+          <h4 className="font-headline text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <Info size={20} className="text-brand-lime" />
+            How it Works
+          </h4>
+          <ul className="space-y-3 text-sm font-medium text-text-muted">
+            <li className="flex items-start gap-3">
+              <Check size={18} className="text-brand-lime shrink-0 mt-0.5" />
+              <span><strong className="text-white">Static Tech™</strong> – Non-adhesive, non-residue suction</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <Check size={18} className="text-brand-lime shrink-0 mt-0.5" />
+              <span>Perfect for renters & homeowners alike</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <Check size={18} className="text-brand-lime shrink-0 mt-0.5" />
+              <span>Precision custom cut to your exact measurements</span>
+            </li>
+          </ul>
+        </motion.div>
+
+        {/* Numbered Timeline */}
+        <div className="relative pl-2 space-y-8 mb-12">
+          {/* Vertical Line */}
+          <motion.div 
+            initial={{ height: 0 }}
+            animate={{ height: '100%' }}
+            transition={{ duration: 1, delay: 0.7, ease: "easeInOut" }}
+            className="absolute left-[23px] top-8 bottom-8 w-0.5 bg-gradient-to-b from-brand-lime via-brand-lime/50 to-transparent origin-top"
+          ></motion.div>
+
+          {/* Step 1 */}
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.8 }}
+            className="relative z-10 flex items-start gap-5"
+          >
+            <div className="w-10 h-10 rounded-full bg-surface-high border-2 border-brand-lime flex items-center justify-center font-headline font-bold text-brand-lime shrink-0 shadow-[0_0_15px_rgba(180,207,82,0.15)]">1</div>
+            <div className="pt-2">
+              <p className="font-bold text-base text-white mb-1">MEASUREMENT</p>
+              <p className="text-sm text-text-muted">Input Dimensions (W/H, cm)</p>
+            </div>
+          </motion.div>
+
+          {/* Step 2 */}
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.9 }}
+            className="relative z-10 flex items-start gap-5"
+          >
+            <div className="w-10 h-10 rounded-full bg-surface-high border-2 border-brand-lime flex items-center justify-center font-headline font-bold text-brand-lime shrink-0 shadow-[0_0_15px_rgba(180,207,82,0.15)]">2</div>
+            <div className="pt-2 w-full">
+              <p className="font-bold text-base text-white mb-3">SELECT DESIGN</p>
+              <div className="flex gap-3">
+                <div className="w-14 h-14 bg-surface-highest rounded-xl border-2 border-surface-highest overflow-hidden hover:border-brand-lime transition-colors">
+                  <img src="https://i.ibb.co/HLZCS7Zp/Chat-GPT-Image-Mar-17-2026-05-04-40-PM.png" alt="Stripes" className="w-full h-full object-cover" />
+                </div>
+                <div className="w-14 h-14 bg-surface-highest rounded-xl border-2 border-surface-highest overflow-hidden hover:border-brand-lime transition-colors">
+                  <img src="https://i.ibb.co/vvjtVcjV/stripe.png" alt="Frosted" className="w-full h-full object-cover" />
+                </div>
+                <div className="w-14 h-14 bg-surface-highest rounded-xl border-2 border-surface-highest overflow-hidden hover:border-brand-lime transition-colors">
+                  <img src="https://i.ibb.co/wNz9X34w/Untitled-3.png" alt="Brick" className="w-full h-full object-cover" />
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Step 3 */}
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 1.0 }}
+            className="relative z-10 flex items-start gap-5"
+          >
+            <div className="w-10 h-10 rounded-full bg-surface-high border-2 border-brand-lime flex items-center justify-center font-headline font-bold text-brand-lime shrink-0 shadow-[0_0_15px_rgba(180,207,82,0.15)]">3</div>
+            <div className="pt-2">
+              <p className="font-bold text-base text-white mb-1">PRIVACY LEVEL</p>
+              <p className="text-sm text-text-muted">Half, Full, Custom</p>
+            </div>
+          </motion.div>
+
+          {/* Step 4 */}
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 1.1 }}
+            className="relative z-10 flex items-start gap-5"
+          >
+            <div className="w-10 h-10 rounded-full bg-brand-lime border-2 border-brand-lime flex items-center justify-center font-headline font-bold text-black shrink-0 shadow-[0_0_15px_rgba(180,207,82,0.3)]">4</div>
+            <div className="pt-2">
+              <p className="font-bold text-base text-white mb-1">CALCULATE PRICE</p>
+              <p className="text-sm text-text-muted">Instant, Free Quote</p>
+            </div>
+          </motion.div>
+        </div>
+
+        <motion.button 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 1.2, ease: "easeOut" }}
+          onClick={onNext} 
+          className="w-full bg-brand-lime text-black font-headline font-extrabold text-lg py-5 rounded-2xl shadow-[0_10px_30px_rgba(180,207,82,0.25)] hover:bg-[#b4cf52] hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-2"
+        >
+          START YOUR PRECISION QUOTE <ArrowRight size={20} />
+        </motion.button>
+      </div>
+    </div>
+  );
+}
 
 function Step1({ onNext }: { onNext: () => void }) {
   const [count, setCount] = useState(1);
