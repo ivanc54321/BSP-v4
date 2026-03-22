@@ -12,6 +12,7 @@ export default function App() {
   const [step, setStep] = useState(0);
   const [isDark, setIsDark] = useState(true);
   const [windowCount, setWindowCount] = useState(1);
+  const [privacyLevel, setPrivacyLevel] = useState(50);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -71,7 +72,7 @@ export default function App() {
           )}
           {step === 1 && (
             <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
-              <Step1 onNext={nextStep} windowCount={windowCount} setWindowCount={setWindowCount} />
+              <Step1 onNext={nextStep} windowCount={windowCount} setWindowCount={setWindowCount} privacyLevel={privacyLevel} setPrivacyLevel={setPrivacyLevel} />
             </motion.div>
           )}
           {step === 2 && (
@@ -81,7 +82,7 @@ export default function App() {
           )}
           {step === 3 && (
             <motion.div key="step3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
-              <Step3 windowCount={windowCount} />
+              <Step3 windowCount={windowCount} privacyLevel={privacyLevel} />
             </motion.div>
           )}
         </AnimatePresence>
@@ -309,10 +310,9 @@ function Step0({ onNext }: { onNext: () => void }) {
   );
 }
 
-function Step1({ onNext, windowCount, setWindowCount }: { onNext: () => void, windowCount: number, setWindowCount: (c: number) => void }) {
+function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLevel }: { onNext: () => void, windowCount: number, setWindowCount: (c: number) => void, privacyLevel: number, setPrivacyLevel: (p: number) => void }) {
   const [width, setWidth] = useState('');
   const [height, setHeight] = useState('');
-  const [privacyLevel, setPrivacyLevel] = useState(50);
   const windowRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [tipIndex, setTipIndex] = useState(0);
@@ -421,10 +421,13 @@ function Step1({ onNext, windowCount, setWindowCount }: { onNext: () => void, wi
             {/* Left Pane Outer */}
             <div className="flex-[0.48] bg-[#f8f8f8] rounded-sm border-[4px] border-[#ffffff] relative shadow-[inset_0_0_8px_rgba(0,0,0,0.3)] overflow-hidden pointer-events-none">
               {/* "Outside" Background */}
-              <div className="absolute inset-0 bg-gradient-to-b from-sky-300 to-sky-100">
-                <div className="absolute top-8 left-2 w-16 h-5 bg-white/80 rounded-full blur-[2px]"></div>
-                <div className="absolute top-12 left-12 w-10 h-3 bg-white/60 rounded-full blur-[1px]"></div>
-                <div className="absolute bottom-0 left-0 right-0 h-2/5 bg-gradient-to-t from-emerald-800/40 to-emerald-600/20 blur-sm"></div>
+              <div className="absolute inset-0 bg-gradient-to-b from-sky-400 via-sky-200 to-sky-100">
+                {/* Realistic Clouds */}
+                <div className="absolute top-6 left-2 w-16 h-6 bg-white/90 rounded-full blur-[1px] shadow-[inset_0_-2px_4px_rgba(0,0,0,0.1)]"></div>
+                <div className="absolute top-8 left-10 w-12 h-5 bg-white/80 rounded-full blur-[1px] shadow-[inset_0_-2px_4px_rgba(0,0,0,0.1)]"></div>
+                <div className="absolute top-14 -left-4 w-20 h-6 bg-white/70 rounded-full blur-[2px]"></div>
+                
+                <div className="absolute bottom-0 left-0 right-0 h-2/5 bg-gradient-to-t from-emerald-800/60 via-emerald-600/30 to-transparent blur-[1px]"></div>
                 {/* Glass Reflection */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/40 pointer-events-none"></div>
                 <div className="absolute -inset-full top-0 left-[-100%] w-[200%] h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -rotate-45 transform translate-x-1/4 pointer-events-none"></div>
@@ -432,13 +435,13 @@ function Step1({ onNext, windowCount, setWindowCount }: { onNext: () => void, wi
 
               {/* Frosted Film */}
               <div 
-                className="absolute bottom-0 left-0 right-0 bg-white/50 backdrop-blur-xl border-t-[1.5px] border-white/80 transition-all duration-75 ease-out flex items-center justify-center shadow-[0_-2px_10px_rgba(255,255,255,0.3)]"
+                className="absolute bottom-0 left-0 right-0 bg-white/10 backdrop-blur-md border-t-[1.5px] border-white/80 transition-all duration-75 ease-out flex items-center justify-center shadow-[0_-2px_10px_rgba(255,255,255,0.3)]"
                 style={{ height: `${privacyLevel}%` }}
               >
                 {/* Film Texture */}
-                <div className="absolute inset-0 opacity-30 mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
+                <div className="absolute inset-0 opacity-10 mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
                 {/* Stripes */}
-                <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 8px, rgba(255,255,255,0.9) 8px, rgba(255,255,255,0.9) 16px)' }}></div>
+                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 8px, rgba(255,255,255,0.9) 8px, rgba(255,255,255,0.9) 16px)' }}></div>
                 
                 {/* Privacy Number Badge */}
                 {privacyLevel > 15 && (
@@ -456,9 +459,12 @@ function Step1({ onNext, windowCount, setWindowCount }: { onNext: () => void, wi
             {/* Right Pane Outer */}
             <div className="flex-[0.52] bg-[#f8f8f8] rounded-sm border-[4px] border-[#ffffff] relative shadow-[inset_0_0_8px_rgba(0,0,0,0.3)] overflow-hidden pointer-events-none">
               {/* "Outside" Background */}
-              <div className="absolute inset-0 bg-gradient-to-b from-sky-300 to-sky-100">
-                <div className="absolute top-16 right-6 w-20 h-6 bg-white/80 rounded-full blur-[2px]"></div>
-                <div className="absolute bottom-0 left-0 right-0 h-2/5 bg-gradient-to-t from-emerald-800/40 to-emerald-600/20 blur-sm"></div>
+              <div className="absolute inset-0 bg-gradient-to-b from-sky-400 via-sky-200 to-sky-100">
+                {/* Realistic Clouds */}
+                <div className="absolute top-12 right-4 w-24 h-8 bg-white/90 rounded-full blur-[1px] shadow-[inset_0_-2px_4px_rgba(0,0,0,0.1)]"></div>
+                <div className="absolute top-16 right-16 w-16 h-6 bg-white/80 rounded-full blur-[1px] shadow-[inset_0_-2px_4px_rgba(0,0,0,0.1)]"></div>
+                
+                <div className="absolute bottom-0 left-0 right-0 h-2/5 bg-gradient-to-t from-emerald-800/60 via-emerald-600/30 to-transparent blur-[1px]"></div>
                 {/* Glass Reflection */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/40 pointer-events-none"></div>
                 <div className="absolute -inset-full top-0 left-[-100%] w-[200%] h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -rotate-45 transform translate-x-1/4 pointer-events-none"></div>
@@ -466,13 +472,13 @@ function Step1({ onNext, windowCount, setWindowCount }: { onNext: () => void, wi
 
               {/* Frosted Film */}
               <div 
-                className="absolute bottom-0 left-0 right-0 bg-white/50 backdrop-blur-xl border-t-[1.5px] border-white/80 transition-all duration-75 ease-out flex items-center justify-center shadow-[0_-2px_10px_rgba(255,255,255,0.3)]"
+                className="absolute bottom-0 left-0 right-0 bg-white/10 backdrop-blur-md border-t-[1.5px] border-white/80 transition-all duration-75 ease-out flex items-center justify-center shadow-[0_-2px_10px_rgba(255,255,255,0.3)]"
                 style={{ height: `${privacyLevel}%` }}
               >
                 {/* Film Texture */}
-                <div className="absolute inset-0 opacity-30 mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
+                <div className="absolute inset-0 opacity-10 mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
                 {/* Stripes */}
-                <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 8px, rgba(255,255,255,0.9) 8px, rgba(255,255,255,0.9) 16px)' }}></div>
+                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 8px, rgba(255,255,255,0.9) 8px, rgba(255,255,255,0.9) 16px)' }}></div>
               </div>
             </div>
           </div>
@@ -635,7 +641,7 @@ function DesignCard({ title, desc, imgUrl, popular, onSelect }: { title: string,
   );
 }
 
-function Step3({ windowCount }: { windowCount: number }) {
+function Step3({ windowCount, privacyLevel }: { windowCount: number, privacyLevel: number }) {
   const count = useMotionValue(0);
   const rounded = useTransform(count, Math.round);
   const totalPrice = windowCount * 30;
@@ -659,7 +665,13 @@ function Step3({ windowCount }: { windowCount: number }) {
               <span className="font-bold text-[8px] uppercase tracking-widest text-text-muted">Pattern Selected</span>
             </div>
             <h2 className="font-headline text-xl font-extrabold text-text-main mb-2">Geometric Frost</h2>
-            <p className="text-xs text-text-muted">High-precision laser cut privacy film with 85% light transmission.</p>
+            <p className="text-xs text-text-muted mb-4">High-precision laser cut privacy film with 85% light transmission.</p>
+            
+            {/* Privacy Level Indicator */}
+            <div className="flex items-center justify-between bg-surface-low rounded-lg p-3 border border-surface-highest/30">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted">Privacy Height</span>
+              <span className="text-xs font-extrabold text-brand-lime bg-brand-lime/10 px-2 py-1 rounded">{privacyLevel}%</span>
+            </div>
           </div>
         </div>
       </div>
