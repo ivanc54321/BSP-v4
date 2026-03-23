@@ -5,14 +5,16 @@ import {
   Info, Lightbulb, ShieldCheck, Minus, Plus, 
   ArrowRight, EyeOff, Shield, Sliders, Calendar, 
   Bookmark, Check, ChevronDown, LayoutGrid,
-  Moon, Sun, Phone
+  Moon, Sun, Phone, MessageSquare
 } from 'lucide-react';
+import { Chatbot } from './components/Chatbot';
 
 export default function App() {
   const [step, setStep] = useState(0);
   const [isDark, setIsDark] = useState(true);
   const [windowCount, setWindowCount] = useState(1);
   const [privacyLevel, setPrivacyLevel] = useState(50);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -67,7 +69,7 @@ export default function App() {
         <AnimatePresence mode="wait">
           {step === 0 && (
             <motion.div key="step0" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
-              <Step0 onNext={nextStep} />
+              <Step0 onNext={nextStep} onOpenChat={() => setIsChatOpen(true)} />
             </motion.div>
           )}
           {step === 1 && (
@@ -95,6 +97,8 @@ export default function App() {
         <NavItem icon={<User size={24} strokeWidth={1.5} />} label="Profile" />
         <NavItem icon={<Settings size={24} strokeWidth={1.5} />} label="Settings" />
       </nav>
+
+      <Chatbot isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
     </div>
   );
 }
@@ -132,7 +136,7 @@ function ProgressBar({ step, total, label }: { step: number, total: number, labe
 
 // --- STEPS ---
 
-function Step0({ onNext }: { onNext: () => void }) {
+function Step0({ onNext, onOpenChat }: { onNext: () => void, onOpenChat: () => void }) {
   return (
     <div className="flex flex-col -mt-8 -mx-6">
       {/* Hero Section */}
@@ -144,10 +148,10 @@ function Step0({ onNext }: { onNext: () => void }) {
             alt="Installation Background"
             referrerPolicy="no-referrer"
             initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 0.5, scale: 1 }}
+            animate={{ opacity: 0.6, scale: 1 }}
             transition={{ duration: 1.5, ease: "easeInOut" }}
-            className="absolute inset-0 w-full h-full object-cover mix-blend-multiply"
-            style={{ filter: 'grayscale(100%) contrast(1.2)' }}
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ filter: 'grayscale(30%) contrast(1.1)' }}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/20 to-brand-lime/40"></div>
         </div>
@@ -198,9 +202,10 @@ function Step0({ onNext }: { onNext: () => void }) {
         </motion.button>
 
         <motion.button 
+          onClick={onOpenChat}
           className="bg-surface-bg text-text-main font-headline font-bold text-sm py-3 px-5 rounded-xl border border-surface-highest flex items-center justify-center gap-2 shadow-lg hover:bg-surface-highest transition-colors"
         >
-          <Phone size={18} className="text-brand-lime" /> Contact Us
+          <MessageSquare size={18} className="text-brand-lime" /> CHAT WITH US
         </motion.button>
       </motion.div>
 
