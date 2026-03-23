@@ -36,20 +36,26 @@ export function Chatbot({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
     setIsLoading(true);
 
     try {
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey || apiKey === 'stub_key' || apiKey === 'undefined') {
+        // Fallback mock response when no API key is provided
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setMessages(prev => [...prev, {
+          id: (Date.now() + 1).toString(),
+          role: 'model',
+          text: 'This is a mocked response! To enable real AI chat, please add your GEMINI_API_KEY to the .env file.'
+        }]);
+        return;
+      }
+
       // Build chat history for context
       const chat = ai.chats.create({
-        model: 'gemini-3.1-pro-preview',
+        model: 'gemini-2.5-flash',
         config: {
           systemInstruction: "You are a helpful customer support assistant for Brightside, a company that provides Static Glazing installation (window privacy film). You answer questions about pricing, designs, and the installation process. Be concise, friendly, and helpful. The app allows users to get a precision quote by entering window dimensions and selecting a design.",
         }
       });
 
-      // Send previous messages to establish context (excluding the initial greeting if needed, or just send the latest)
-      // For simplicity, we'll just send the current message, but ideally we'd use the chat session.
-      // Since ai.chats.create creates a new session, we should ideally maintain the chat instance,
-      // but recreating it and sending the history is also possible.
-      // Let's just send the current message for now, or we can use generateContent with history.
-      
       const response = await chat.sendMessage({ message: userMsg.text });
       
       const modelMsg: Message = {
