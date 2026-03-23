@@ -15,6 +15,9 @@ export default function App() {
   const [windowCount, setWindowCount] = useState(1);
   const [privacyLevel, setPrivacyLevel] = useState(50);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [width, setWidth] = useState('');
+  const [height, setHeight] = useState('');
+  const [designId, setDesignId] = useState('stripes');
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -74,17 +77,17 @@ export default function App() {
           )}
           {step === 1 && (
             <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
-              <Step1 onNext={nextStep} windowCount={windowCount} setWindowCount={setWindowCount} privacyLevel={privacyLevel} setPrivacyLevel={setPrivacyLevel} />
+              <Step1 onNext={nextStep} windowCount={windowCount} setWindowCount={setWindowCount} privacyLevel={privacyLevel} setPrivacyLevel={setPrivacyLevel} width={width} setWidth={setWidth} height={height} setHeight={setHeight} />
             </motion.div>
           )}
           {step === 2 && (
             <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
-              <Step2 onNext={nextStep} />
+              <Step2 onNext={(id) => { setDesignId(id); nextStep(); }} />
             </motion.div>
           )}
           {step === 3 && (
             <motion.div key="step3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
-              <Step3 windowCount={windowCount} privacyLevel={privacyLevel} />
+              <Step3 windowCount={windowCount} privacyLevel={privacyLevel} width={width} height={height} designId={designId} />
             </motion.div>
           )}
         </AnimatePresence>
@@ -324,9 +327,7 @@ function Step0({ onNext, onOpenChat }: { onNext: () => void, onOpenChat: () => v
   );
 }
 
-function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLevel }: { onNext: () => void, windowCount: number, setWindowCount: (c: number) => void, privacyLevel: number, setPrivacyLevel: (p: number) => void }) {
-  const [width, setWidth] = useState('');
-  const [height, setHeight] = useState('');
+function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLevel, width, setWidth, height, setHeight }: { onNext: () => void, windowCount: number, setWindowCount: (c: number) => void, privacyLevel: number, setPrivacyLevel: (p: number) => void, width: string, setWidth: (w: string) => void, height: string, setHeight: (h: string) => void }) {
   const windowRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [tipIndex, setTipIndex] = useState(0);
@@ -546,7 +547,15 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
             value={width}
             onChange={(e) => setWidth(e.target.value)}
             placeholder="e.g. 120" 
-            className="w-full bg-surface-highest/50 border-none rounded-2xl p-4 text-base focus:ring-2 focus:ring-brand-lime outline-none transition-shadow placeholder:text-text-muted/50 font-medium" 
+            className="w-full bg-surface-highest/50 border-none rounded-2xl p-4 text-base focus:ring-2 focus:ring-brand-lime outline-none transition-shadow placeholder:text-text-muted/50 font-medium mb-3" 
+          />
+          <input
+            type="range"
+            min="0"
+            max="300"
+            value={width || 0}
+            onChange={(e) => setWidth(e.target.value)}
+            className="w-full h-2 bg-surface-highest rounded-lg appearance-none cursor-pointer accent-brand-lime"
           />
         </div>
         <div>
@@ -556,7 +565,15 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
             value={height}
             onChange={(e) => setHeight(e.target.value)}
             placeholder="e.g. 150" 
-            className="w-full bg-surface-highest/50 border-none rounded-2xl p-4 text-base focus:ring-2 focus:ring-brand-lime outline-none transition-shadow placeholder:text-text-muted/50 font-medium" 
+            className="w-full bg-surface-highest/50 border-none rounded-2xl p-4 text-base focus:ring-2 focus:ring-brand-lime outline-none transition-shadow placeholder:text-text-muted/50 font-medium mb-3" 
+          />
+          <input
+            type="range"
+            min="0"
+            max="300"
+            value={height || 0}
+            onChange={(e) => setHeight(e.target.value)}
+            className="w-full h-2 bg-surface-highest rounded-lg appearance-none cursor-pointer accent-brand-lime"
           />
         </div>
       </div>
@@ -603,7 +620,7 @@ function InfoCard({ icon, title, desc }: { icon: React.ReactNode, title: string,
   );
 }
 
-function Step2({ onNext }: { onNext: () => void }) {
+function Step2({ onNext }: { onNext: (id: string) => void }) {
   return (
     <div className="flex flex-col">
       <ProgressBar step={2} total={3} label="66% Completed" />
@@ -626,19 +643,19 @@ function Step2({ onNext }: { onNext: () => void }) {
           desc="Classic linear pattern for privacy. Ideal for office dividers and modern residential entries."
           imgUrl="https://i.ibb.co/HLZCS7Zp/Chat-GPT-Image-Mar-17-2026-05-04-40-PM.png"
           popular
-          onSelect={onNext}
+          onSelect={() => onNext('stripes')}
         />
         <DesignCard 
           title="Frosted" 
           desc="Maximum privacy with high light transmission. The architectural standard for bathrooms and storefronts."
           imgUrl="https://i.ibb.co/vvjtVcjV/stripe.png"
-          onSelect={onNext}
+          onSelect={() => onNext('frosted')}
         />
         <DesignCard 
           title="Brick Style" 
           desc="Geometric staggered pattern providing a unique textured look and partial visibility."
           imgUrl="https://i.ibb.co/wNz9X34w/Untitled-3.png"
-          onSelect={onNext}
+          onSelect={() => onNext('brick')}
         />
       </div>
 
@@ -671,15 +688,37 @@ function DesignCard({ title, desc, imgUrl, popular, onSelect }: { title: string,
   );
 }
 
-function Step3({ windowCount, privacyLevel }: { windowCount: number, privacyLevel: number }) {
+function Step3({ windowCount, privacyLevel, width, height, designId }: { windowCount: number, privacyLevel: number, width: string, height: string, designId: string }) {
   const count = useMotionValue(0);
   const rounded = useTransform(count, Math.round);
-  const totalPrice = windowCount * 30;
+  
+  const w = parseFloat(width) || 0;
+  const h = parseFloat(height) || 0;
+  const areaCm2 = w * h;
+  const baseCost = areaCm2 * 0.05;
+  const privacyMulti = 1 + (privacyLevel / 100) * 0.2;
+  
+  let designMulti = 1.0;
+  let designName = "Stripes";
+  let designDesc = "Classic linear pattern for privacy. Ideal for office dividers and modern residential entries.";
+  
+  if (designId === 'frosted') {
+    designMulti = 1.1;
+    designName = "Frosted";
+    designDesc = "Maximum privacy with high light transmission. The architectural standard for bathrooms and storefronts.";
+  } else if (designId === 'brick') {
+    designMulti = 1.2;
+    designName = "Brick Style";
+    designDesc = "Geometric staggered pattern providing a unique textured look and partial visibility.";
+  }
+  
+  let totalPrice = Math.round(baseCost * privacyMulti * designMulti * windowCount);
+  if (totalPrice === 0) totalPrice = 30 * windowCount;
 
   useEffect(() => {
     const controls = animate(count, totalPrice, { duration: 2, ease: "easeOut" });
     return () => controls.stop();
-  }, [totalPrice]);
+  }, [totalPrice, count]);
 
   return (
     <div className="flex flex-col -mt-8 -mx-6">
@@ -694,8 +733,8 @@ function Step3({ windowCount, privacyLevel }: { windowCount: number, privacyLeve
               <ShieldCheck size={18} className="text-brand-lime" />
               <span className="font-bold text-[8px] uppercase tracking-widest text-text-muted">Pattern Selected</span>
             </div>
-            <h2 className="font-headline text-xl font-extrabold text-text-main mb-2">Geometric Frost</h2>
-            <p className="text-xs text-text-muted mb-4">High-precision laser cut privacy film with 85% light transmission.</p>
+            <h2 className="font-headline text-xl font-extrabold text-text-main mb-2">{designName}</h2>
+            <p className="text-xs text-text-muted mb-4">{designDesc}</p>
             
             {/* Privacy Level Indicator */}
             <div className="flex items-center justify-between bg-surface-low rounded-lg p-3 border border-surface-highest/30">
@@ -727,7 +766,7 @@ function Step3({ windowCount, privacyLevel }: { windowCount: number, privacyLeve
           <div className="bg-surface-low rounded-3xl p-6">
             <LayoutGrid size={24} className="text-brand-lime mb-4" />
             <h4 className="font-headline font-bold text-base mb-1">Dimensions</h4>
-            <p className="text-xs text-text-muted leading-relaxed">200cm x 150cm<br/>Standard Residential Fit</p>
+            <p className="text-xs text-text-muted leading-relaxed">{w && h ? `${w}cm x ${h}cm` : 'Standard Residential Fit'}<br/>{w && h ? 'Custom Precision Cut' : 'Standard Fit'}</p>
           </div>
           <div className="bg-surface-low rounded-3xl p-6">
             <Calendar size={24} className="text-brand-lime mb-4" />
