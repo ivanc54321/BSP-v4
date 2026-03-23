@@ -133,40 +133,22 @@ function ProgressBar({ step, total, label }: { step: number, total: number, labe
 // --- STEPS ---
 
 function Step0({ onNext }: { onNext: () => void }) {
-  const [currentImage, setCurrentImage] = useState(0);
-
-  const images = [
-    "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80&w=800",
-    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800",
-    "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800"
-  ];
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentImage((prev) => (prev + 1) % images.length);
-    }, 4000);
-    return () => clearInterval(timer);
-  }, []);
-
   return (
     <div className="flex flex-col -mt-8 -mx-6">
       {/* Hero Section */}
       <div className="relative bg-brand-lime pt-16 pb-28 px-6 rounded-b-[2.5rem] overflow-hidden mb-8 shadow-lg min-h-[400px] flex flex-col justify-start">
-        {/* Background Image Slideshow */}
+        {/* Background Image */}
         <div className="absolute inset-0 z-0 bg-black">
-          <AnimatePresence mode="popLayout">
-            <motion.img
-              key={currentImage}
-              src={images[currentImage]}
-              alt="Installation Background"
-              initial={{ opacity: 0, scale: 1.05 }}
-              animate={{ opacity: 0.5, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1.5, ease: "easeInOut" }}
-              className="absolute inset-0 w-full h-full object-cover mix-blend-multiply"
-              style={{ filter: 'grayscale(100%) contrast(1.2)' }}
-            />
-          </AnimatePresence>
+          <motion.img
+            src="https://i.ibb.co/LzcC6gVn/Green-tech-service-and-van-display.png"
+            alt="Installation Background"
+            referrerPolicy="no-referrer"
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 0.5, scale: 1 }}
+            transition={{ duration: 1.5, ease: "easeInOut" }}
+            className="absolute inset-0 w-full h-full object-cover mix-blend-multiply"
+            style={{ filter: 'grayscale(100%) contrast(1.2)' }}
+          />
           <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/20 to-brand-lime/40"></div>
         </div>
 
@@ -296,13 +278,13 @@ function Step0({ onNext }: { onNext: () => void }) {
               <p className="font-bold text-base text-white mb-3">SELECT DESIGN</p>
               <div className="flex gap-3">
                 <div className="w-14 h-14 bg-surface-highest rounded-xl border-2 border-surface-highest overflow-hidden hover:border-brand-lime transition-colors">
-                  <img src="https://i.ibb.co/HLZCS7Zp/Chat-GPT-Image-Mar-17-2026-05-04-40-PM.png" alt="Stripes" className="w-full h-full object-cover" />
+                  <img src="https://i.ibb.co/HLZCS7Zp/Chat-GPT-Image-Mar-17-2026-05-04-40-PM.png" alt="Stripes" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                 </div>
                 <div className="w-14 h-14 bg-surface-highest rounded-xl border-2 border-surface-highest overflow-hidden hover:border-brand-lime transition-colors">
-                  <img src="https://i.ibb.co/vvjtVcjV/stripe.png" alt="Frosted" className="w-full h-full object-cover" />
+                  <img src="https://i.ibb.co/vvjtVcjV/stripe.png" alt="Frosted" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                 </div>
                 <div className="w-14 h-14 bg-surface-highest rounded-xl border-2 border-surface-highest overflow-hidden hover:border-brand-lime transition-colors">
-                  <img src="https://i.ibb.co/wNz9X34w/Untitled-3.png" alt="Brick" className="w-full h-full object-cover" />
+                  <img src="https://i.ibb.co/wNz9X34w/Untitled-3.png" alt="Brick" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                 </div>
               </div>
             </div>
@@ -387,34 +369,9 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
     <div className="flex flex-col">
       <ProgressBar step={1} total={3} label="33% Completed" />
       
-      <motion.div 
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="mb-4"
-      >
-        <h1 className="font-headline text-2xl md:text-3xl font-extrabold text-text-main tracking-tight mb-1">
-          Window <span className="text-brand-lime">Dimensions</span>
-        </h1>
-        <div className="relative h-[40px]">
-          <AnimatePresence mode="wait">
-            <motion.p
-              key={tipIndex}
-              initial={{ opacity: 0, y: 5 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -5 }}
-              transition={{ duration: 0.3 }}
-              className="text-text-muted text-sm leading-snug max-w-md absolute inset-0"
-            >
-              {tips[tipIndex]}
-            </motion.p>
-          </AnimatePresence>
-        </div>
-      </motion.div>
-
       {/* Privacy Slider */}
-      <div className="mb-6 bg-surface-low p-4 rounded-2xl border border-surface-highest/30 shadow-sm">
-        <div className="flex justify-between items-center mb-2">
+      <div className="mb-8 bg-surface-low p-5 rounded-2xl border border-surface-highest/30 shadow-sm">
+        <div className="flex justify-between items-center mb-3">
           <label className="font-bold text-xs text-text-main flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-brand-lime"></div>
             Privacy Film Height
@@ -432,7 +389,7 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
       </div>
 
       {/* Diagram Area */}
-      <div className="bg-surface-low rounded-[2rem] p-6 mb-8 flex justify-center items-center relative overflow-hidden">
+      <div className="bg-surface-low rounded-[2rem] p-8 mb-12 flex justify-center items-center relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-tr from-brand-lime/5 to-transparent"></div>
         
         <div className="relative w-64 h-64 z-10 my-4">
@@ -550,6 +507,31 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
         </div>
       </div>
 
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="mb-6"
+      >
+        <h1 className="font-headline text-2xl md:text-3xl font-extrabold text-text-main tracking-tight mb-1.5">
+          Window <span className="text-brand-lime">Dimensions</span>
+        </h1>
+        <div className="relative h-[40px]">
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={tipIndex}
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -5 }}
+              transition={{ duration: 0.3 }}
+              className="text-text-muted text-sm leading-snug max-w-md absolute inset-0"
+            >
+              {tips[tipIndex]}
+            </motion.p>
+          </AnimatePresence>
+        </div>
+      </motion.div>
+
       {/* Inputs */}
       <div className="space-y-6 mb-10">
         <div>
@@ -666,7 +648,7 @@ function DesignCard({ title, desc, imgUrl, popular, onSelect }: { title: string,
   return (
     <div className="bg-surface-bg rounded-[2rem] overflow-hidden shadow-[0_20px_40px_rgba(46,47,44,0.04)] hover:shadow-[0_20px_40px_rgba(198,225,90,0.1)] transition-all duration-500 border-2 border-transparent hover:border-brand-lime/30 flex flex-col group">
       <div className="aspect-[4/3] relative overflow-hidden bg-surface-highest">
-        <img src={imgUrl} alt={title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+        <img src={imgUrl} alt={title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" referrerPolicy="no-referrer" />
         {popular && (
           <div className="absolute top-4 right-4 bg-brand-lime text-black px-3 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest shadow-lg">
             Popular
@@ -698,7 +680,7 @@ function Step3({ windowCount, privacyLevel }: { windowCount: number, privacyLeve
     <div className="flex flex-col -mt-8 -mx-6">
       {/* Hero Image */}
       <div className="relative h-[400px] w-full overflow-hidden">
-        <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&q=80&w=1200" alt="Interior" className="w-full h-full object-cover" />
+        <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&q=80&w=1200" alt="Interior" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
         
         {/* Floating Card */}
         <div className="absolute bottom-6 left-6 right-6">
