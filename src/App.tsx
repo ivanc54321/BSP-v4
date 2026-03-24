@@ -176,13 +176,13 @@ function Step0({ onNext, onOpenChat }: { onNext: () => void, onOpenChat: () => v
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
-          className="relative z-10"
+          className="relative z-10 flex flex-col items-center text-center w-full"
         >
-          <h1 className="font-headline text-3xl font-black text-white tracking-tight leading-[1.05] mb-2 uppercase drop-shadow-md">
+          <h1 className="font-headline text-3xl font-black text-white tracking-tight leading-[1.05] mb-2 uppercase drop-shadow-md text-center">
             Static Glazing<br/>
             <span className="text-brand-lime drop-shadow-sm">Installation</span>
           </h1>
-          <h2 className="font-headline text-xs font-bold text-white/80 tracking-widest uppercase mb-2 drop-shadow-md">
+          <h2 className="font-headline text-xs font-bold text-white/80 tracking-widest uppercase mb-2 drop-shadow-md text-center">
             Window Privacy Film
           </h2>
         </motion.div>
