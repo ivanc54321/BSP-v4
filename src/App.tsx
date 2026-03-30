@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'motion/react';
 import { 
-  ArrowLeft, X, Home, FileText, User, Settings, 
+  ArrowLeft, X, Home, FileText, User, Settings, HelpCircle,
   Info, Lightbulb, ShieldCheck, Minus, Plus, 
   ArrowRight, EyeOff, Shield, Sliders, Calendar, 
   Bookmark, Check, ChevronDown, LayoutGrid,
-  Moon, Sun, Phone, MessageSquare
+  Moon, Sun, Phone, MessageSquare, Briefcase
 } from 'lucide-react';
 import { Chatbot } from './components/Chatbot';
 
@@ -87,15 +87,25 @@ export default function App() {
               <Step3 windowCount={windowCount} privacyLevel={privacyLevel} />
             </motion.div>
           )}
+          {step === 4 && (
+            <motion.div key="step4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+              <AboutUs />
+            </motion.div>
+          )}
+          {step === 5 && (
+            <motion.div key="step5" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+              <WhyUs />
+            </motion.div>
+          )}
         </AnimatePresence>
       </main>
 
       {/* Bottom Nav */}
       <nav className="fixed bottom-0 left-0 right-0 bg-surface-bg/80 backdrop-blur-2xl border-t border-surface-highest/50 px-6 py-4 flex justify-between items-center z-50 rounded-t-[2rem] shadow-[0_-20px_40px_rgba(46,47,44,0.03)] pb-8">
         <NavItem icon={<Home size={24} strokeWidth={1.5} />} label="Home" active={step === 0} onClick={() => setStep(0)} />
-        <NavItem icon={<FileText size={24} strokeWidth={2} />} label="Quotes" active={step > 0} onClick={() => setStep(1)} />
-        <NavItem icon={<User size={24} strokeWidth={1.5} />} label="Profile" />
-        <NavItem icon={<Settings size={24} strokeWidth={1.5} />} label="Settings" />
+        <NavItem icon={<FileText size={24} strokeWidth={2} />} label="Quotes" active={step > 0 && step < 4} onClick={() => setStep(1)} />
+        <NavItem icon={<Info size={24} strokeWidth={1.5} />} label="About Us" active={step === 4} onClick={() => setStep(4)} />
+        <NavItem icon={<HelpCircle size={24} strokeWidth={1.5} />} label="Why Us" active={step === 5} onClick={() => setStep(5)} />
       </nav>
 
       <Chatbot isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
@@ -171,21 +181,35 @@ function Step0({ onNext, onOpenChat }: { onNext: () => void, onOpenChat: () => v
           <h2 className="font-headline text-xs font-bold text-white/80 tracking-widest uppercase mb-4 drop-shadow-md">
             Window Privacy Film
           </h2>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.5, type: "spring", stiffness: 200 }}
-            className="relative group mt-2"
-          >
-            <div className="absolute inset-0 bg-brand-lime/20 rounded-full blur-md group-hover:bg-brand-lime/40 transition-all duration-500"></div>
-            <p className="relative text-[10px] font-bold text-white tracking-widest uppercase bg-black/60 px-5 py-2.5 rounded-full backdrop-blur-md border border-brand-lime/30 max-w-[320px] leading-relaxed flex items-center gap-3 shadow-xl">
-              <span className="relative flex h-2 w-2 shrink-0">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-lime opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-lime"></span>
+        </motion.div>
+      </div>
+
+      {/* Ticker Scroll */}
+      <div className="relative z-10 -mt-24 mb-10 overflow-hidden py-3 bg-black/60 backdrop-blur-md border-y border-brand-lime/30 shadow-xl">
+        <motion.div
+          animate={{ x: [0, -1000] }}
+          transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
+          className="flex whitespace-nowrap items-center gap-8"
+        >
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="flex items-center gap-8">
+              <span className="text-brand-lime font-headline font-bold text-sm tracking-widest uppercase flex items-center gap-3">
+                <span className="relative flex h-2 w-2 shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-lime opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-lime"></span>
+                </span>
+                Areas Covered
               </span>
-              <span>Areas Covered: Broadstairs, Margate, Ramsgate. More coming soon.</span>
-            </p>
-          </motion.div>
+              <span className="text-white font-headline font-bold text-sm tracking-widest uppercase">Broadstairs</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-lime/50"></span>
+              <span className="text-white font-headline font-bold text-sm tracking-widest uppercase">Margate</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-lime/50"></span>
+              <span className="text-white font-headline font-bold text-sm tracking-widest uppercase">Ramsgate</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-lime/50"></span>
+              <span className="text-brand-lime font-headline font-bold text-sm tracking-widest uppercase">More coming soon</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-lime/50"></span>
+            </div>
+          ))}
         </motion.div>
       </div>
 
@@ -194,7 +218,7 @@ function Step0({ onNext, onOpenChat }: { onNext: () => void, onOpenChat: () => v
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.4, ease: "easeOut" }}
-        className="flex justify-center gap-3 -mt-12 relative z-20 mb-10 px-6"
+        className="flex justify-center gap-3 relative z-20 mb-10 px-6"
       >
         <motion.button 
           onClick={onNext} 
@@ -634,24 +658,42 @@ function Step2({ onNext }: { onNext: () => void }) {
         </p>
       </div>
 
-      <div className="space-y-8 mb-12">
+      <div className="grid grid-cols-2 gap-4 mb-12">
         <DesignCard 
           title="Stripes" 
-          desc="Classic linear pattern for privacy. Ideal for office dividers and modern residential entries."
+          desc="Classic linear pattern for privacy. Ideal for office dividers."
           imgUrl="https://i.ibb.co/HLZCS7Zp/Chat-GPT-Image-Mar-17-2026-05-04-40-PM.png"
           popular
           onSelect={onNext}
         />
         <DesignCard 
           title="Frosted" 
-          desc="Maximum privacy with high light transmission. The architectural standard for bathrooms and storefronts."
+          desc="Maximum privacy with high light transmission. The architectural standard."
           imgUrl="https://i.ibb.co/vvjtVcjV/stripe.png"
           onSelect={onNext}
         />
         <DesignCard 
           title="Brick Style" 
-          desc="Geometric staggered pattern providing a unique textured look and partial visibility."
+          desc="Geometric staggered pattern providing a unique textured look."
           imgUrl="https://i.ibb.co/wNz9X34w/Untitled-3.png"
+          onSelect={onNext}
+        />
+        <DesignCard 
+          title="Geometric" 
+          desc="Modern intersecting lines creating a sophisticated privacy barrier."
+          imgUrl="https://live.staticflickr.com/65535/55177673305_8bfbda1dec_z.jpg"
+          onSelect={onNext}
+        />
+        <DesignCard 
+          title="Reeded" 
+          desc="Vertical fluted glass effect for a vintage yet contemporary feel."
+          imgUrl="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=400"
+          onSelect={onNext}
+        />
+        <DesignCard 
+          title="Dusted" 
+          desc="Subtle sandblasted appearance for elegant, understated privacy."
+          imgUrl="https://images.unsplash.com/photo-1541123356219-284ebe98ae3b?auto=format&fit=crop&q=80&w=400"
           onSelect={onNext}
         />
       </div>
@@ -665,20 +707,20 @@ function Step2({ onNext }: { onNext: () => void }) {
 
 function DesignCard({ title, desc, imgUrl, popular, onSelect }: { title: string, desc: string, imgUrl: string, popular?: boolean, onSelect: () => void }) {
   return (
-    <div className="bg-surface-bg rounded-[2rem] overflow-hidden shadow-[0_20px_40px_rgba(46,47,44,0.04)] hover:shadow-[0_20px_40px_rgba(198,225,90,0.1)] transition-all duration-500 border-2 border-transparent hover:border-brand-lime/30 flex flex-col group">
-      <div className="aspect-[4/3] relative overflow-hidden bg-surface-highest">
+    <div className="bg-surface-bg rounded-3xl overflow-hidden shadow-[0_10px_30px_rgba(46,47,44,0.04)] hover:shadow-[0_20px_40px_rgba(198,225,90,0.1)] transition-all duration-500 border-2 border-transparent hover:border-brand-lime/30 flex flex-col group">
+      <div className="aspect-square relative overflow-hidden bg-surface-highest">
         <img src={imgUrl} alt={title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" referrerPolicy="no-referrer" />
         {popular && (
-          <div className="absolute top-4 right-4 bg-brand-lime text-black px-3 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest shadow-lg">
+          <div className="absolute top-3 right-3 bg-brand-lime text-black px-2 py-1 rounded-full text-[8px] font-extrabold uppercase tracking-widest shadow-lg">
             Popular
           </div>
         )}
       </div>
-      <div className="p-8 flex flex-col flex-grow">
-        <h3 className="font-headline font-bold text-xl mb-3">{title}</h3>
-        <p className="font-body text-xs text-text-muted mb-8 flex-grow leading-relaxed">{desc}</p>
-        <button onClick={onSelect} className={`w-full py-3 text-sm font-bold rounded-xl transition-all active:scale-95 ${popular ? 'bg-brand-lime text-black hover:bg-[#b4cf52] shadow-md shadow-brand-lime/20' : 'bg-surface-high text-text-main hover:bg-brand-lime hover:text-black'}`}>
-          Select Design
+      <div className="p-4 md:p-6 flex flex-col flex-grow">
+        <h3 className="font-headline font-bold text-base md:text-lg mb-2">{title}</h3>
+        <p className="font-body text-[10px] md:text-xs text-text-muted mb-4 flex-grow leading-relaxed line-clamp-3">{desc}</p>
+        <button onClick={onSelect} className={`w-full py-2.5 text-xs font-bold rounded-xl transition-all active:scale-95 ${popular ? 'bg-brand-lime text-black hover:bg-[#b4cf52] shadow-md shadow-brand-lime/20' : 'bg-surface-high text-text-main hover:bg-brand-lime hover:text-black'}`}>
+          Select
         </button>
       </div>
     </div>
@@ -775,3 +817,102 @@ function Step3({ windowCount, privacyLevel }: { windowCount: number, privacyLeve
     </div>
   );
 }
+
+function AboutUs() {
+  return (
+    <div className="flex flex-col -mt-8 -mx-6">
+      {/* Hero Section */}
+      <div className="relative bg-brand-lime pt-16 pb-20 px-6 rounded-b-[2.5rem] overflow-hidden mb-8 shadow-lg min-h-[300px] flex flex-col justify-center">
+        <div className="absolute inset-0 z-0 bg-black">
+          <img 
+            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1200" 
+            alt="About Us" 
+            className="absolute inset-0 w-full h-full object-cover opacity-50" 
+            referrerPolicy="no-referrer" 
+          />
+        </div>
+        <div className="relative z-10 flex flex-col items-center text-center mt-4">
+          <h1 className="font-headline text-3xl font-black text-white tracking-tight leading-[1.05] mb-2 uppercase drop-shadow-md">
+            About <span className="text-brand-lime">Us</span>
+          </h1>
+          <p className="text-white/90 text-sm max-w-md mt-4 font-medium leading-relaxed">
+            We specialize in premium static glazing and window privacy films. Our mission is to provide beautiful, non-adhesive solutions for renters and homeowners alike.
+          </p>
+        </div>
+      </div>
+      
+      <div className="px-6 pb-20 space-y-6">
+        <div className="bg-surface-low p-6 rounded-3xl border border-surface-highest/50 shadow-sm">
+          <h3 className="font-headline text-xl font-bold text-text-main mb-3 flex items-center gap-2">
+            <ShieldCheck className="text-brand-lime" size={24} /> Our Guarantee
+          </h3>
+          <p className="text-text-muted text-sm leading-relaxed">
+            Every installation comes with our Brightside Guarantee. We ensure perfect custom fits with our Static Tech™ non-residue suction films.
+          </p>
+        </div>
+        <div className="bg-surface-low p-6 rounded-3xl border border-surface-highest/50 shadow-sm">
+          <h3 className="font-headline text-xl font-bold text-text-main mb-3 flex items-center gap-2">
+            <User className="text-brand-lime" size={24} /> Our Team
+          </h3>
+          <p className="text-text-muted text-sm leading-relaxed">
+            Based in Broadstairs, Margate, and Ramsgate, our expert installers are dedicated to transforming your spaces with precision and care.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function WhyUs() {
+  return (
+    <div className="flex flex-col -mt-8 -mx-6">
+      {/* Hero Section */}
+      <div className="relative bg-brand-lime pt-16 pb-20 px-6 rounded-b-[2.5rem] overflow-hidden mb-8 shadow-lg min-h-[300px] flex flex-col justify-center">
+        <div className="absolute inset-0 z-0 bg-black">
+          <img 
+            src="https://images.unsplash.com/photo-1541123356219-284ebe98ae3b?auto=format&fit=crop&q=80&w=1200" 
+            alt="Why Us" 
+            className="absolute inset-0 w-full h-full object-cover opacity-50" 
+            referrerPolicy="no-referrer" 
+          />
+        </div>
+        <div className="relative z-10 flex flex-col items-center text-center mt-4">
+          <h1 className="font-headline text-3xl font-black text-white tracking-tight leading-[1.05] mb-2 uppercase drop-shadow-md">
+            Why <span className="text-brand-lime">Us</span>
+          </h1>
+          <p className="text-white/90 text-sm max-w-md mt-4 font-medium leading-relaxed">
+            Discover the Brightside difference. We combine innovative technology with exceptional service to deliver the best window privacy solutions.
+          </p>
+        </div>
+      </div>
+      
+      <div className="px-6 pb-20 space-y-6">
+        <div className="bg-surface-low p-6 rounded-3xl border border-surface-highest/50 shadow-sm">
+          <h3 className="font-headline text-xl font-bold text-text-main mb-3 flex items-center gap-2">
+            <Lightbulb className="text-brand-lime" size={24} /> Static Tech™ Advantage
+          </h3>
+          <p className="text-text-muted text-sm leading-relaxed">
+            Our proprietary Static Tech™ films use advanced non-adhesive, non-residue suction technology. They are easy to apply, remove, and reposition, making them the perfect choice for both renters and homeowners who want a hassle-free privacy solution without damaging their windows.
+          </p>
+        </div>
+        <div className="bg-surface-low p-6 rounded-3xl border border-surface-highest/50 shadow-sm">
+          <h3 className="font-headline text-xl font-bold text-text-main mb-3 flex items-center gap-2">
+            <Sliders className="text-brand-lime" size={24} /> Ultimate Customizability
+          </h3>
+          <p className="text-text-muted text-sm leading-relaxed">
+            Every window is unique, and so are your privacy needs. We offer precision custom cutting to your exact measurements and a wide variety of designs—from classic frosted and reeded to modern geometric patterns—ensuring a perfect match for your architectural style.
+          </p>
+        </div>
+        <div className="bg-surface-low p-6 rounded-3xl border border-surface-highest/50 shadow-sm">
+          <h3 className="font-headline text-xl font-bold text-text-main mb-3 flex items-center gap-2">
+            <Briefcase className="text-brand-lime" size={24} /> Professional Service
+          </h3>
+          <p className="text-text-muted text-sm leading-relaxed">
+            From your initial instant quote to the final installation, our expert team provides a seamless, professional experience. We handle the final measurements and precision fitting, so you can sit back and enjoy your newly transformed space with complete peace of mind.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
