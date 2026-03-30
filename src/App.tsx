@@ -15,9 +15,6 @@ export default function App() {
   const [windowCount, setWindowCount] = useState(1);
   const [privacyLevel, setPrivacyLevel] = useState(50);
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [width, setWidth] = useState('');
-  const [height, setHeight] = useState('');
-  const [designId, setDesignId] = useState('stripes');
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -31,7 +28,7 @@ export default function App() {
     }
   }, [isDark]);
 
-  const nextStep = () => setStep(s => Math.min(5, s + 1));
+  const nextStep = () => setStep(s => Math.min(3, s + 1));
   const prevStep = () => setStep(s => Math.max(1, s - 1));
 
   return (
@@ -77,27 +74,17 @@ export default function App() {
           )}
           {step === 1 && (
             <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
-              <Step1 onNext={nextStep} windowCount={windowCount} setWindowCount={setWindowCount} privacyLevel={privacyLevel} setPrivacyLevel={setPrivacyLevel} width={width} setWidth={setWidth} height={height} setHeight={setHeight} />
+              <Step1 onNext={nextStep} windowCount={windowCount} setWindowCount={setWindowCount} privacyLevel={privacyLevel} setPrivacyLevel={setPrivacyLevel} />
             </motion.div>
           )}
           {step === 2 && (
             <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
-              <Step2 onNext={(id) => { setDesignId(id); nextStep(); }} />
+              <Step2 onNext={nextStep} />
             </motion.div>
           )}
           {step === 3 && (
             <motion.div key="step3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
-              <Step3 windowCount={windowCount} privacyLevel={privacyLevel} width={width} height={height} designId={designId} onNext={nextStep} />
-            </motion.div>
-          )}
-          {step === 4 && (
-            <motion.div key="step4" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
-              <Step4 onComplete={nextStep} />
-            </motion.div>
-          )}
-          {step === 5 && (
-            <motion.div key="step5" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, type: "spring" }}>
-              <Step5 onHome={() => { setStep(0); setWidth(''); setHeight(''); setWindowCount(1); }} />
+              <Step3 windowCount={windowCount} privacyLevel={privacyLevel} />
             </motion.div>
           )}
         </AnimatePresence>
@@ -166,7 +153,6 @@ function Step0({ onNext, onOpenChat }: { onNext: () => void, onOpenChat: () => v
             className="absolute inset-0 w-full h-full object-cover"
             style={{ filter: 'grayscale(30%) contrast(1.1)' }}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/20 to-brand-lime/40"></div>
         </div>
 
         {/* Background Pattern */}
@@ -176,15 +162,30 @@ function Step0({ onNext, onOpenChat }: { onNext: () => void, onOpenChat: () => v
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
-          className="relative z-10 flex flex-col items-center text-center w-full"
+          className="relative z-10 flex flex-col items-center text-center mt-4"
         >
-          <h1 className="font-headline text-3xl font-black text-white tracking-tight leading-[1.05] mb-2 uppercase drop-shadow-md text-center">
+          <h1 className="font-headline text-3xl font-black text-white tracking-tight leading-[1.05] mb-2 uppercase drop-shadow-md">
             Static Glazing<br/>
             <span className="text-brand-lime drop-shadow-sm">Installation</span>
           </h1>
-          <h2 className="font-headline text-xs font-bold text-white/80 tracking-widest uppercase mb-2 drop-shadow-md text-center">
+          <h2 className="font-headline text-xs font-bold text-white/80 tracking-widest uppercase mb-4 drop-shadow-md">
             Window Privacy Film
           </h2>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5, type: "spring", stiffness: 200 }}
+            className="relative group mt-2"
+          >
+            <div className="absolute inset-0 bg-brand-lime/20 rounded-full blur-md group-hover:bg-brand-lime/40 transition-all duration-500"></div>
+            <p className="relative text-[10px] font-bold text-white tracking-widest uppercase bg-black/60 px-5 py-2.5 rounded-full backdrop-blur-md border border-brand-lime/30 max-w-[320px] leading-relaxed flex items-center gap-3 shadow-xl">
+              <span className="relative flex h-2 w-2 shrink-0">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-lime opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-lime"></span>
+              </span>
+              <span>Areas Covered: Broadstairs, Margate, Ramsgate. More coming soon.</span>
+            </p>
+          </motion.div>
         </motion.div>
       </div>
 
@@ -337,20 +338,12 @@ function Step0({ onNext, onOpenChat }: { onNext: () => void, onOpenChat: () => v
   );
 }
 
-function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLevel, width, setWidth, height, setHeight }: { onNext: () => void, windowCount: number, setWindowCount: (c: number) => void, privacyLevel: number, setPrivacyLevel: (p: number) => void, width: string, setWidth: (w: string) => void, height: string, setHeight: (h: string) => void }) {
+function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLevel }: { onNext: () => void, windowCount: number, setWindowCount: (c: number) => void, privacyLevel: number, setPrivacyLevel: (p: number) => void }) {
+  const [width, setWidth] = useState('');
+  const [height, setHeight] = useState('');
   const windowRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [tipIndex, setTipIndex] = useState(0);
-  const [error, setError] = useState('');
-
-  const handleNext = () => {
-    if (!width || !height || parseFloat(width) <= 0 || parseFloat(height) <= 0) {
-      setError('Please enter both your window width and height to calculate an accurate quote.');
-      return;
-    }
-    setError('');
-    onNext();
-  };
 
   const tips = [
     "Enter the approximate measurements for your two-pane window replacement. Accuracy helps us provide a better estimate.",
@@ -415,140 +408,122 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
       </div>
 
       {/* Diagram Area */}
-      <div className="bg-surface-low rounded-[2rem] p-8 mb-12 flex flex-wrap justify-center items-center relative overflow-hidden gap-x-8 gap-y-12">
+      <div className="bg-surface-low rounded-[2rem] p-8 mb-12 flex justify-center items-center relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-tr from-brand-lime/5 to-transparent"></div>
         
-        {Array.from({ length: Math.min(windowCount, 4) }).map((_, idx) => {
-          const isPrimary = idx === 0;
-          const isMedium = windowCount === 2;
-          const isSmall = windowCount > 2;
-          const dims = isSmall ? 'w-24 h-24' : (isMedium ? 'w-40 h-40' : 'w-64 h-64');
-          return (
-          <div key={idx} className={`relative z-10 ${dims}`}>
-            {/* Window Frame Outer */}
-            <div 
-              ref={isPrimary ? windowRef : null}
-              onPointerDown={isPrimary ? handlePointerDown : undefined}
-              onPointerMove={isPrimary ? handlePointerMove : undefined}
-              onPointerUp={isPrimary ? handlePointerUp : undefined}
-              onPointerCancel={isPrimary ? handlePointerUp : undefined}
-              className={`absolute inset-0 border-[${isSmall ? '4px' : '12px'}] border-[#ffffff] rounded-lg bg-[#e8e8e8] flex ${isSmall ? 'gap-0.5' : 'gap-2'} shadow-[inset_0_4px_12px_rgba(0,0,0,0.15),0_15px_35px_rgba(0,0,0,0.2)] p-1 ${isPrimary ? 'cursor-ns-resize touch-none' : ''}`}
-            >
-              {/* Left Pane Outer */}
-              <div className={`flex-[0.48] bg-[#f8f8f8] rounded-sm border-[${isSmall ? '1px' : '4px'}] border-[#ffffff] relative shadow-[inset_0_0_8px_rgba(0,0,0,0.3)] overflow-hidden pointer-events-none`}>
-                {/* "Outside" Background */}
-                <div className="absolute inset-0 bg-gradient-to-b from-sky-400 via-sky-200 to-sky-100">
-                  {/* Realistic Clouds */}
-                  <div className="absolute top-6 left-2 w-16 h-6 bg-white/90 rounded-full blur-[1px] shadow-[inset_0_-2px_4px_rgba(0,0,0,0.1)]"></div>
-                  <div className="absolute top-8 left-10 w-12 h-5 bg-white/80 rounded-full blur-[1px] shadow-[inset_0_-2px_4px_rgba(0,0,0,0.1)]"></div>
-                  <div className="absolute top-14 -left-4 w-20 h-6 bg-white/70 rounded-full blur-[2px]"></div>
-                  
-                  <div className="absolute bottom-0 left-0 right-0 h-2/5 bg-gradient-to-t from-emerald-800/60 via-emerald-600/30 to-transparent blur-[1px]"></div>
-                  {/* Glass Reflection */}
-                  <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/40 pointer-events-none"></div>
-                  <div className="absolute -inset-full top-0 left-[-100%] w-[200%] h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -rotate-45 transform translate-x-1/4 pointer-events-none"></div>
-                </div>
-
-                {/* Frosted Film */}
-                <motion.div 
-                  className="absolute bottom-0 left-0 right-0 bg-white/10 backdrop-blur-md border-t-[1.5px] border-white/80 flex items-center justify-center shadow-[0_-2px_10px_rgba(255,255,255,0.3)] overflow-hidden"
-                  animate={{ height: `${privacyLevel}%` }}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                >
-                  {/* Film Texture */}
-                  <div className="absolute inset-0 opacity-10 mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
-                  {/* Stripes */}
-                  <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 8px, rgba(255,255,255,0.9) 8px, rgba(255,255,255,0.9) 16px)' }}></div>
-                  
-                  {/* Shimmer Effect */}
-                  <motion.div 
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12"
-                    animate={{ x: ['-200%', '200%'] }}
-                    transition={{ repeat: Infinity, duration: 3, ease: "linear", repeatDelay: 2 }}
-                  />
-                  
-                  {/* Privacy Number Badge (only on massive ones) */}
-                  {!isSmall && privacyLevel > 15 && (
-                    <div className="relative z-20 bg-brand-lime text-black text-[10px] font-extrabold px-2.5 py-1 rounded-md shadow-md backdrop-blur-md border border-brand-lime/50 flex items-center gap-1">
-                      <div className="w-1.5 h-1.5 rounded-full bg-black/80 animate-pulse"></div>
-                      {privacyLevel}%
-                    </div>
-                  )}
-                </motion.div>
+        <div className="relative w-64 h-64 z-10 my-4">
+          {/* Window Frame Outer */}
+          <div 
+            ref={windowRef}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerUp}
+            className="absolute inset-0 border-[12px] border-[#ffffff] rounded-lg bg-[#e8e8e8] flex gap-2 shadow-[inset_0_4px_12px_rgba(0,0,0,0.15),0_15px_35px_rgba(0,0,0,0.2)] p-1 cursor-ns-resize touch-none"
+          >
+            {/* Left Pane Outer */}
+            <div className="flex-[0.48] bg-[#f8f8f8] rounded-sm border-[4px] border-[#ffffff] relative shadow-[inset_0_0_8px_rgba(0,0,0,0.3)] overflow-hidden pointer-events-none">
+              {/* "Outside" Background */}
+              <div className="absolute inset-0 bg-gradient-to-b from-sky-400 via-sky-200 to-sky-100">
+                {/* Realistic Clouds */}
+                <div className="absolute top-6 left-2 w-16 h-6 bg-white/90 rounded-full blur-[1px] shadow-[inset_0_-2px_4px_rgba(0,0,0,0.1)]"></div>
+                <div className="absolute top-8 left-10 w-12 h-5 bg-white/80 rounded-full blur-[1px] shadow-[inset_0_-2px_4px_rgba(0,0,0,0.1)]"></div>
+                <div className="absolute top-14 -left-4 w-20 h-6 bg-white/70 rounded-full blur-[2px]"></div>
                 
-                {/* Handle */}
-                {!isSmall && <div className="absolute top-1/2 -right-1.5 w-3 h-14 bg-gradient-to-b from-[#f0f0f0] via-[#d0d0d0] to-[#b0b0b0] rounded-l-md -translate-y-1/2 shadow-[-2px_0_5px_rgba(0,0,0,0.2)] z-10 border-y border-l border-[#a0a0a0]"></div>}
+                <div className="absolute bottom-0 left-0 right-0 h-2/5 bg-gradient-to-t from-emerald-800/60 via-emerald-600/30 to-transparent blur-[1px]"></div>
+                {/* Glass Reflection */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/40 pointer-events-none"></div>
+                <div className="absolute -inset-full top-0 left-[-100%] w-[200%] h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -rotate-45 transform translate-x-1/4 pointer-events-none"></div>
               </div>
 
-              {/* Right Pane Outer */}
-              <div className={`flex-[0.52] bg-[#f8f8f8] rounded-sm border-[${isSmall ? '1px' : '4px'}] border-[#ffffff] relative shadow-[inset_0_0_8px_rgba(0,0,0,0.3)] overflow-hidden pointer-events-none`}>
-                {/* "Outside" Background */}
-                <div className="absolute inset-0 bg-gradient-to-b from-sky-400 via-sky-200 to-sky-100">
-                  {/* Realistic Clouds */}
-                  <div className="absolute top-12 right-4 w-24 h-8 bg-white/90 rounded-full blur-[1px] shadow-[inset_0_-2px_4px_rgba(0,0,0,0.1)]"></div>
-                  <div className="absolute top-16 right-16 w-16 h-6 bg-white/80 rounded-full blur-[1px] shadow-[inset_0_-2px_4px_rgba(0,0,0,0.1)]"></div>
-                  
-                  <div className="absolute bottom-0 left-0 right-0 h-2/5 bg-gradient-to-t from-emerald-800/60 via-emerald-600/30 to-transparent blur-[1px]"></div>
-                  {/* Glass Reflection */}
-                  <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/40 pointer-events-none"></div>
-                  <div className="absolute -inset-full top-0 left-[-100%] w-[200%] h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -rotate-45 transform translate-x-1/4 pointer-events-none"></div>
-                </div>
-
-                {/* Frosted Film */}
+              {/* Frosted Film */}
+              <motion.div 
+                className="absolute bottom-0 left-0 right-0 bg-white/10 backdrop-blur-md border-t-[1.5px] border-white/80 flex items-center justify-center shadow-[0_-2px_10px_rgba(255,255,255,0.3)] overflow-hidden"
+                animate={{ height: `${privacyLevel}%` }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              >
+                {/* Film Texture */}
+                <div className="absolute inset-0 opacity-10 mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
+                {/* Stripes */}
+                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 8px, rgba(255,255,255,0.9) 8px, rgba(255,255,255,0.9) 16px)' }}></div>
+                
+                {/* Shimmer Effect */}
                 <motion.div 
-                  className="absolute bottom-0 left-0 right-0 bg-white/10 backdrop-blur-md border-t-[1.5px] border-white/80 flex items-center justify-center shadow-[0_-2px_10px_rgba(255,255,255,0.3)] overflow-hidden"
-                  animate={{ height: `${privacyLevel}%` }}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                >
-                  {/* Film Texture */}
-                  <div className="absolute inset-0 opacity-10 mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
-                  {/* Stripes */}
-                  <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 8px, rgba(255,255,255,0.9) 8px, rgba(255,255,255,0.9) 16px)' }}></div>
-                  
-                  {/* Shimmer Effect */}
-                  <motion.div 
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12"
-                    animate={{ x: ['-200%', '200%'] }}
-                    transition={{ repeat: Infinity, duration: 3, ease: "linear", repeatDelay: 2, delay: 0.5 }}
-                  />
-                </motion.div>
-              </div>
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12"
+                  animate={{ x: ['-200%', '200%'] }}
+                  transition={{ repeat: Infinity, duration: 3, ease: "linear", repeatDelay: 2 }}
+                />
+                
+                {/* Privacy Number Badge */}
+                {privacyLevel > 15 && (
+                  <div className="relative z-20 bg-brand-lime text-black text-[10px] font-extrabold px-2.5 py-1 rounded-md shadow-md backdrop-blur-md border border-brand-lime/50 flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 rounded-full bg-black/80 animate-pulse"></div>
+                    {privacyLevel}%
+                  </div>
+                )}
+              </motion.div>
+
+              {/* Handle */}
+              <div className="absolute top-1/2 -right-1.5 w-3 h-14 bg-gradient-to-b from-[#f0f0f0] via-[#d0d0d0] to-[#b0b0b0] rounded-l-md -translate-y-1/2 shadow-[-2px_0_5px_rgba(0,0,0,0.2)] z-10 border-y border-l border-[#a0a0a0]"></div>
             </div>
-            
-            {/* Markers only on first primary window */}
-            {isPrimary && (
-              <>
-                {/* Height Line */}
-                <div className={`absolute -right-5 top-0 bottom-0 flex flex-col items-center ${isSmall ? 'scale-75 origin-left' : ''}`}>
-                  <div className="w-px h-full bg-brand-lime relative">
-                    <div className="absolute -top-1 -left-1 w-2 h-2 border-t-2 border-l-2 border-brand-lime rotate-45"></div>
-                    <div className="absolute -bottom-1 -left-1 w-2 h-2 border-b-2 border-l-2 border-brand-lime -rotate-45"></div>
-                  </div>
-                  <div className="absolute top-1/2 -translate-y-1/2 bg-surface-bg px-1.5 py-1 rounded text-[8px] font-bold text-brand-dark shadow-sm whitespace-nowrap z-20">
-                    {height ? `${height} cm` : 'Height'}
-                  </div>
-                </div>
+
+            {/* Right Pane Outer */}
+            <div className="flex-[0.52] bg-[#f8f8f8] rounded-sm border-[4px] border-[#ffffff] relative shadow-[inset_0_0_8px_rgba(0,0,0,0.3)] overflow-hidden pointer-events-none">
+              {/* "Outside" Background */}
+              <div className="absolute inset-0 bg-gradient-to-b from-sky-400 via-sky-200 to-sky-100">
+                {/* Realistic Clouds */}
+                <div className="absolute top-12 right-4 w-24 h-8 bg-white/90 rounded-full blur-[1px] shadow-[inset_0_-2px_4px_rgba(0,0,0,0.1)]"></div>
+                <div className="absolute top-16 right-16 w-16 h-6 bg-white/80 rounded-full blur-[1px] shadow-[inset_0_-2px_4px_rgba(0,0,0,0.1)]"></div>
                 
-                {/* Width Line */}
-                <div className={`absolute -bottom-8 left-0 right-0 flex items-center ${isSmall ? 'scale-75 origin-top' : ''}`}>
-                  <div className="h-px w-full bg-brand-lime relative">
-                    <div className="absolute -left-1 -top-1 w-2 h-2 border-b-2 border-l-2 border-brand-lime rotate-45"></div>
-                    <div className="absolute -right-1 -top-1 w-2 h-2 border-t-2 border-r-2 border-brand-lime rotate-45"></div>
-                  </div>
-                  <div className="absolute left-1/2 -translate-x-1/2 bg-surface-bg px-2 py-1 rounded text-[8px] font-bold text-brand-dark shadow-sm whitespace-nowrap">
-                    {width ? `${width} cm` : 'Width'}
-                  </div>
-                </div>
-              </>
-            )}
+                <div className="absolute bottom-0 left-0 right-0 h-2/5 bg-gradient-to-t from-emerald-800/60 via-emerald-600/30 to-transparent blur-[1px]"></div>
+                {/* Glass Reflection */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/40 pointer-events-none"></div>
+                <div className="absolute -inset-full top-0 left-[-100%] w-[200%] h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -rotate-45 transform translate-x-1/4 pointer-events-none"></div>
+              </div>
+
+              {/* Frosted Film */}
+              <motion.div 
+                className="absolute bottom-0 left-0 right-0 bg-white/10 backdrop-blur-md border-t-[1.5px] border-white/80 flex items-center justify-center shadow-[0_-2px_10px_rgba(255,255,255,0.3)] overflow-hidden"
+                animate={{ height: `${privacyLevel}%` }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              >
+                {/* Film Texture */}
+                <div className="absolute inset-0 opacity-10 mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
+                {/* Stripes */}
+                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(to bottom, transparent, transparent 8px, rgba(255,255,255,0.9) 8px, rgba(255,255,255,0.9) 16px)' }}></div>
+                
+                {/* Shimmer Effect */}
+                <motion.div 
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12"
+                  animate={{ x: ['-200%', '200%'] }}
+                  transition={{ repeat: Infinity, duration: 3, ease: "linear", repeatDelay: 2, delay: 0.5 }}
+                />
+              </motion.div>
+            </div>
           </div>
-          );
-        })}
-        {windowCount > 4 && (
-          <div className="z-10 text-brand-lime font-headline font-extrabold text-3xl flex items-center justify-center p-4">
-            +{windowCount - 4}
+          
+          {/* Height Line */}
+          <div className="absolute -right-5 top-0 bottom-0 flex flex-col items-center">
+            <div className="w-px h-full bg-brand-lime relative">
+              <div className="absolute -top-1 -left-1 w-2 h-2 border-t-2 border-l-2 border-brand-lime rotate-45"></div>
+              <div className="absolute -bottom-1 -left-1 w-2 h-2 border-b-2 border-l-2 border-brand-lime -rotate-45"></div>
+            </div>
+            <div className="absolute top-1/2 -translate-y-1/2 bg-surface-bg px-1.5 py-1 rounded text-[8px] font-bold text-brand-dark shadow-sm whitespace-nowrap z-20">
+              {height ? `${height} cm` : 'Height'}
+            </div>
           </div>
-        )}
+          
+          {/* Width Line */}
+          <div className="absolute -bottom-8 left-0 right-0 flex items-center">
+            <div className="h-px w-full bg-brand-lime relative">
+              <div className="absolute -left-1 -top-1 w-2 h-2 border-b-2 border-l-2 border-brand-lime rotate-45"></div>
+              <div className="absolute -right-1 -top-1 w-2 h-2 border-t-2 border-r-2 border-brand-lime rotate-45"></div>
+            </div>
+            <div className="absolute left-1/2 -translate-x-1/2 bg-surface-bg px-2 py-1 rounded text-[8px] font-bold text-brand-dark shadow-sm whitespace-nowrap">
+              {width ? `${width} cm` : 'Width'}
+            </div>
+          </div>
+        </div>
       </div>
 
       <motion.div 
@@ -583,17 +558,9 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
           <input 
             type="number" 
             value={width}
-            onChange={(e) => { setWidth(e.target.value); setError(''); }}
+            onChange={(e) => setWidth(e.target.value)}
             placeholder="e.g. 120" 
-            className="w-full bg-surface-highest/50 border-none rounded-2xl p-4 text-base focus:ring-2 focus:ring-brand-lime outline-none transition-shadow placeholder:text-text-muted/50 font-medium mb-3" 
-          />
-          <input
-            type="range"
-            min="0"
-            max="300"
-            value={width || 0}
-            onChange={(e) => { setWidth(e.target.value); setError(''); }}
-            className="w-full h-2 bg-surface-highest rounded-lg appearance-none cursor-pointer accent-brand-lime"
+            className="w-full bg-surface-highest/50 border-none rounded-2xl p-4 text-base focus:ring-2 focus:ring-brand-lime outline-none transition-shadow placeholder:text-text-muted/50 font-medium" 
           />
         </div>
         <div>
@@ -601,17 +568,9 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
           <input 
             type="number" 
             value={height}
-            onChange={(e) => { setHeight(e.target.value); setError(''); }}
+            onChange={(e) => setHeight(e.target.value)}
             placeholder="e.g. 150" 
-            className="w-full bg-surface-highest/50 border-none rounded-2xl p-4 text-base focus:ring-2 focus:ring-brand-lime outline-none transition-shadow placeholder:text-text-muted/50 font-medium mb-3" 
-          />
-          <input
-            type="range"
-            min="0"
-            max="300"
-            value={height || 0}
-            onChange={(e) => { setHeight(e.target.value); setError(''); }}
-            className="w-full h-2 bg-surface-highest rounded-lg appearance-none cursor-pointer accent-brand-lime"
+            className="w-full bg-surface-highest/50 border-none rounded-2xl p-4 text-base focus:ring-2 focus:ring-brand-lime outline-none transition-shadow placeholder:text-text-muted/50 font-medium" 
           />
         </div>
       </div>
@@ -630,20 +589,7 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
         </div>
       </div>
 
-      <AnimatePresence>
-        {error && (
-          <motion.div 
-            initial={{ opacity: 0, y: -10 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            exit={{ opacity: 0, y: 5 }} 
-            className="text-red-500 font-bold text-xs text-center py-3 px-4 mb-4 rounded-xl border border-red-500/20 bg-[#fff5f5] dark:bg-red-500/10"
-          >
-            {error}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <button onClick={handleNext} className="w-full bg-brand-lime text-black font-headline font-extrabold text-sm py-4 rounded-full shadow-lg shadow-brand-lime/20 hover:bg-[#b4cf52] hover:-translate-y-0.5 transition-all active:scale-95 flex items-center justify-center gap-2 mb-12">
+      <button onClick={onNext} className="w-full bg-brand-lime text-black font-headline font-extrabold text-sm py-4 rounded-full shadow-lg shadow-brand-lime/20 hover:bg-[#b4cf52] hover:-translate-y-0.5 transition-all active:scale-95 flex items-center justify-center gap-2 mb-12">
         Next <ArrowRight size={18} />
       </button>
 
@@ -671,7 +617,7 @@ function InfoCard({ icon, title, desc }: { icon: React.ReactNode, title: string,
   );
 }
 
-function Step2({ onNext }: { onNext: (id: string) => void }) {
+function Step2({ onNext }: { onNext: () => void }) {
   return (
     <div className="flex flex-col">
       <ProgressBar step={2} total={3} label="66% Completed" />
@@ -694,19 +640,19 @@ function Step2({ onNext }: { onNext: (id: string) => void }) {
           desc="Classic linear pattern for privacy. Ideal for office dividers and modern residential entries."
           imgUrl="https://i.ibb.co/HLZCS7Zp/Chat-GPT-Image-Mar-17-2026-05-04-40-PM.png"
           popular
-          onSelect={() => onNext('stripes')}
+          onSelect={onNext}
         />
         <DesignCard 
           title="Frosted" 
           desc="Maximum privacy with high light transmission. The architectural standard for bathrooms and storefronts."
           imgUrl="https://i.ibb.co/vvjtVcjV/stripe.png"
-          onSelect={() => onNext('frosted')}
+          onSelect={onNext}
         />
         <DesignCard 
           title="Brick Style" 
           desc="Geometric staggered pattern providing a unique textured look and partial visibility."
           imgUrl="https://i.ibb.co/wNz9X34w/Untitled-3.png"
-          onSelect={() => onNext('brick')}
+          onSelect={onNext}
         />
       </div>
 
@@ -739,37 +685,15 @@ function DesignCard({ title, desc, imgUrl, popular, onSelect }: { title: string,
   );
 }
 
-function Step3({ windowCount, privacyLevel, width, height, designId, onNext }: { windowCount: number, privacyLevel: number, width: string, height: string, designId: string, onNext: () => void }) {
+function Step3({ windowCount, privacyLevel }: { windowCount: number, privacyLevel: number }) {
   const count = useMotionValue(0);
   const rounded = useTransform(count, Math.round);
-  
-  const w = parseFloat(width) || 0;
-  const h = parseFloat(height) || 0;
-  const areaCm2 = w * h;
-  const baseCost = areaCm2 * 0.05;
-  const privacyMulti = 1 + (privacyLevel / 100) * 0.2;
-  
-  let designMulti = 1.0;
-  let designName = "Stripes";
-  let designDesc = "Classic linear pattern for privacy. Ideal for office dividers and modern residential entries.";
-  
-  if (designId === 'frosted') {
-    designMulti = 1.1;
-    designName = "Frosted";
-    designDesc = "Maximum privacy with high light transmission. The architectural standard for bathrooms and storefronts.";
-  } else if (designId === 'brick') {
-    designMulti = 1.2;
-    designName = "Brick Style";
-    designDesc = "Geometric staggered pattern providing a unique textured look and partial visibility.";
-  }
-  
-  let totalPrice = Math.round(baseCost * privacyMulti * designMulti * windowCount);
-  if (totalPrice === 0) totalPrice = 30 * windowCount;
+  const totalPrice = windowCount * 30;
 
   useEffect(() => {
     const controls = animate(count, totalPrice, { duration: 2, ease: "easeOut" });
     return () => controls.stop();
-  }, [totalPrice, count]);
+  }, [totalPrice]);
 
   return (
     <div className="flex flex-col -mt-8 -mx-6">
@@ -784,8 +708,8 @@ function Step3({ windowCount, privacyLevel, width, height, designId, onNext }: {
               <ShieldCheck size={18} className="text-brand-lime" />
               <span className="font-bold text-[8px] uppercase tracking-widest text-text-muted">Pattern Selected</span>
             </div>
-            <h2 className="font-headline text-xl font-extrabold text-text-main mb-2">{designName}</h2>
-            <p className="text-xs text-text-muted mb-4">{designDesc}</p>
+            <h2 className="font-headline text-xl font-extrabold text-text-main mb-2">Geometric Frost</h2>
+            <p className="text-xs text-text-muted mb-4">High-precision laser cut privacy film with 85% light transmission.</p>
             
             {/* Privacy Level Indicator */}
             <div className="flex items-center justify-between bg-surface-low rounded-lg p-3 border border-surface-highest/30">
@@ -817,7 +741,7 @@ function Step3({ windowCount, privacyLevel, width, height, designId, onNext }: {
           <div className="bg-surface-low rounded-3xl p-6">
             <LayoutGrid size={24} className="text-brand-lime mb-4" />
             <h4 className="font-headline font-bold text-base mb-1">Dimensions</h4>
-            <p className="text-xs text-text-muted leading-relaxed">{w && h ? `${w}cm x ${h}cm` : 'Standard Residential Fit'}<br/>{w && h ? 'Custom Precision Cut' : 'Standard Fit'}</p>
+            <p className="text-xs text-text-muted leading-relaxed">200cm x 150cm<br/>Standard Residential Fit</p>
           </div>
           <div className="bg-surface-low rounded-3xl p-6">
             <Calendar size={24} className="text-brand-lime mb-4" />
@@ -829,7 +753,7 @@ function Step3({ windowCount, privacyLevel, width, height, designId, onNext }: {
         <div className="bg-surface-bg border border-surface-highest rounded-3xl p-6 shadow-sm">
           <h4 className="font-headline font-bold text-lg mb-6">Ready to proceed?</h4>
           <div className="space-y-3 mb-6">
-            <button onClick={onNext} className="w-full bg-brand-lime text-black font-bold text-sm py-4 rounded-full flex items-center justify-center gap-2 hover:bg-[#b4cf52] transition-transform active:scale-95 shadow-lg shadow-brand-lime/20">
+            <button className="w-full bg-brand-lime text-black font-bold text-sm py-4 rounded-full flex items-center justify-center gap-2 hover:bg-[#b4cf52] transition-transform active:scale-95 shadow-lg shadow-brand-lime/20">
               Place Order <ArrowRight size={18} />
             </button>
             <button className="w-full bg-surface-high text-text-main font-bold text-sm py-4 rounded-full flex items-center justify-center gap-2 hover:bg-surface-highest transition-transform active:scale-95">
@@ -848,56 +772,6 @@ function Step3({ windowCount, privacyLevel, width, height, designId, onNext }: {
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-function Step4({ onComplete }: { onComplete: () => void }) {
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '', address: '' });
-  const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); onComplete(); };
-  return (
-    <div className="flex flex-col">
-      <ProgressBar step={4} total={4} label="Final Step" />
-      <div className="mb-8">
-        <h1 className="font-headline text-3xl md:text-4xl font-extrabold text-text-main tracking-tight leading-tight mb-4">Almost there!</h1>
-        <p className="text-text-muted text-base leading-relaxed">Please provide your contact and installation details to finalize your order.</p>
-      </div>
-      <form onSubmit={handleSubmit} className="space-y-5 mb-12">
-        <div>
-          <label className="block font-bold text-xs mb-2 ml-1">Full Name</label>
-          <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="John Doe" className="w-full bg-surface-highest/50 border-none rounded-2xl p-4 text-base focus:ring-2 focus:ring-brand-lime outline-none placeholder:text-text-muted/50 font-medium" />
-        </div>
-        <div>
-          <label className="block font-bold text-xs mb-2 ml-1">Email Address</label>
-          <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="john@example.com" className="w-full bg-surface-highest/50 border-none rounded-2xl p-4 text-base focus:ring-2 focus:ring-brand-lime outline-none placeholder:text-text-muted/50 font-medium" />
-        </div>
-        <div>
-          <label className="block font-bold text-xs mb-2 ml-1">Phone Number</label>
-          <input required type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} placeholder="+44 7700 900000" className="w-full bg-surface-highest/50 border-none rounded-2xl p-4 text-base focus:ring-2 focus:ring-brand-lime outline-none placeholder:text-text-muted/50 font-medium" />
-        </div>
-        <div>
-          <label className="block font-bold text-xs mb-2 ml-1">Installation Address</label>
-          <textarea required value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} placeholder="123 Example Street..." rows={3} className="w-full bg-surface-highest/50 border-none rounded-2xl p-4 text-base focus:ring-2 focus:ring-brand-lime outline-none placeholder:text-text-muted/50 font-medium resize-none"></textarea>
-        </div>
-        <button type="submit" className="w-full bg-brand-lime text-black font-headline font-extrabold text-sm py-4 rounded-full shadow-lg shadow-brand-lime/20 hover:bg-[#b4cf52] hover:-translate-y-0.5 transition-all mt-6 flex items-center justify-center gap-2">
-          Confirm & Submit <Check size={18} />
-        </button>
-      </form>
-    </div>
-  );
-}
-
-function Step5({ onHome }: { onHome: () => void }) {
-  return (
-    <div className="flex flex-col items-center justify-center text-center py-20 px-6">
-      <div className="w-24 h-24 bg-brand-lime/20 text-brand-lime rounded-full flex items-center justify-center mb-8 shadow-[0_0_40px_rgba(198,225,90,0.3)]">
-        <ShieldCheck size={48} />
-      </div>
-      <h2 className="font-headline text-4xl md:text-5xl font-extrabold text-text-main tracking-tight mb-4">Order Confirmed!</h2>
-      <p className="text-text-muted text-base leading-relaxed mb-10 max-w-sm">Thank you for choosing Brightside. Our installation team will contact you shortly to confirm your appointment dates.</p>
-      <button onClick={onHome} className="bg-surface-high text-text-main font-bold py-4 px-10 rounded-full hover:bg-surface-highest transition-colors shadow-lg active:scale-95">
-        Return to Home
-      </button>
     </div>
   );
 }
