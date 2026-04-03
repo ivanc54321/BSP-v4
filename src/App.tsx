@@ -186,41 +186,62 @@ function Step0({ onNext, onOpenChat }: { onNext: () => void, onOpenChat: () => v
 
       {/* Areas Covered Animation */}
       <div className="relative z-10 -mt-24 mb-10 flex justify-center px-6">
-        <div className="bg-black/60 backdrop-blur-md border border-brand-lime/30 shadow-xl rounded-2xl py-3 px-5 flex flex-wrap justify-center items-center gap-x-2 gap-y-1 max-w-sm text-center">
-          <motion.span 
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
+        <motion.button 
+          whileHover={{ scale: 1.02, y: -2 }}
+          whileTap={{ scale: 0.98 }}
+          className="relative group overflow-hidden bg-gradient-to-b from-black/80 to-black/40 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] rounded-2xl py-4 px-6 flex flex-col items-center gap-1.5 max-w-sm w-full cursor-pointer"
+        >
+          {/* Shimmer effect */}
+          <motion.div 
+            className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-20deg]"
+            animate={{ translateX: ['-100%', '200%'] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "linear", repeatDelay: 1 }}
+          />
+          
+          <motion.div 
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.5 }}
-            className="text-brand-lime font-headline font-bold text-xs tracking-widest uppercase flex items-center gap-2 w-full justify-center mb-1"
+            className="flex items-center gap-2"
           >
             <span className="relative flex h-2 w-2 shrink-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-lime opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-lime"></span>
             </span>
-            Areas Covered
-          </motion.span>
+            <span className="text-brand-lime font-headline font-bold text-[10px] tracking-widest uppercase">
+              Areas Covered
+            </span>
+          </motion.div>
           
-          {['Broadstairs,', 'Margate,', 'Ramsgate.'].map((word, i) => (
-            <motion.span
-              key={word}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.9 + (i * 0.2) }}
-              className="text-white font-headline font-bold text-xs tracking-widest uppercase"
-            >
-              {word}
-            </motion.span>
-          ))}
+          <div className="flex flex-wrap justify-center gap-x-2 mt-1">
+            {['Broadstairs,', 'Margate,', 'Ramsgate.'].map((word, i) => (
+              <motion.span
+                key={word}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.9 + (i * 0.15) }}
+                className="text-white font-headline font-bold text-sm tracking-wider"
+              >
+                {word}
+              </motion.span>
+            ))}
+          </div>
           
-          <motion.span
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 0.4, delay: 1.6 }}
-            className="text-brand-lime font-headline font-bold text-[10px] tracking-widest uppercase w-full text-center mt-1"
+            className="mt-1"
           >
-            More coming soon
-          </motion.span>
-        </div>
+            <motion.span
+              animate={{ opacity: [0.7, 1, 0.7] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              className="text-brand-lime/80 font-headline font-bold text-[10px] tracking-widest uppercase flex items-center gap-1"
+            >
+              More coming soon <ArrowRight size={10} className="inline" />
+            </motion.span>
+          </motion.div>
+        </motion.button>
       </div>
 
       {/* Floating Buttons */}
