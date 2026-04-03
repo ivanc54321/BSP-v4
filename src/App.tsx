@@ -709,13 +709,13 @@ function Step2({ onNext }: { onNext: () => void }) {
         <DesignCard 
           title="Reeded" 
           desc="Vertical fluted glass effect for a vintage yet contemporary feel."
-          imgUrl="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=400"
+          imgUrl="https://live.staticflickr.com/65535/55177271926_3f99312d6d_z.jpg"
           onSelect={onNext}
         />
         <DesignCard 
           title="Dusted" 
           desc="Subtle sandblasted appearance for elegant, understated privacy."
-          imgUrl="https://images.unsplash.com/photo-1541123356219-284ebe98ae3b?auto=format&fit=crop&q=80&w=400"
+          imgUrl="https://live.staticflickr.com/65535/55177271941_280b8f8fc6_z.jpg"
           onSelect={onNext}
         />
       </div>
