@@ -9,12 +9,19 @@ import {
 } from 'lucide-react';
 import { Chatbot } from './components/Chatbot';
 
+export type DesignType = {
+  title: string;
+  desc: string;
+  imgUrl: string;
+};
+
 export default function App() {
   const [step, setStep] = useState(0);
   const [isDark, setIsDark] = useState(true);
   const [windowCount, setWindowCount] = useState(1);
   const [privacyLevel, setPrivacyLevel] = useState(50);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [selectedDesign, setSelectedDesign] = useState<DesignType | null>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -79,12 +86,12 @@ export default function App() {
           )}
           {step === 2 && (
             <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
-              <Step2 onNext={nextStep} />
+              <Step2 onNext={(design) => { setSelectedDesign(design); nextStep(); }} />
             </motion.div>
           )}
           {step === 3 && (
             <motion.div key="step3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
-              <Step3 windowCount={windowCount} privacyLevel={privacyLevel} />
+              <Step3 windowCount={windowCount} privacyLevel={privacyLevel} selectedDesign={selectedDesign} />
             </motion.div>
           )}
           {step === 4 && (
@@ -663,7 +670,7 @@ function InfoCard({ icon, title, desc }: { icon: React.ReactNode, title: string,
   );
 }
 
-function Step2({ onNext }: { onNext: () => void }) {
+function Step2({ onNext }: { onNext: (design: DesignType) => void }) {
   return (
     <div className="flex flex-col">
       <ProgressBar step={2} total={3} label="66% Completed" />
@@ -686,37 +693,37 @@ function Step2({ onNext }: { onNext: () => void }) {
           desc="Classic linear pattern for privacy. Ideal for office dividers."
           imgUrl="https://i.ibb.co/HLZCS7Zp/Chat-GPT-Image-Mar-17-2026-05-04-40-PM.png"
           popular
-          onSelect={onNext}
+          onSelect={() => onNext({ title: "Stripes", desc: "Classic linear pattern for privacy. Ideal for office dividers.", imgUrl: "https://i.ibb.co/HLZCS7Zp/Chat-GPT-Image-Mar-17-2026-05-04-40-PM.png" })}
         />
         <DesignCard 
           title="Frosted" 
           desc="Maximum privacy with high light transmission. The architectural standard."
           imgUrl="https://i.ibb.co/vvjtVcjV/stripe.png"
-          onSelect={onNext}
+          onSelect={() => onNext({ title: "Frosted", desc: "Maximum privacy with high light transmission. The architectural standard.", imgUrl: "https://i.ibb.co/vvjtVcjV/stripe.png" })}
         />
         <DesignCard 
           title="Brick Style" 
           desc="Geometric staggered pattern providing a unique textured look."
           imgUrl="https://i.ibb.co/wNz9X34w/Untitled-3.png"
-          onSelect={onNext}
+          onSelect={() => onNext({ title: "Brick Style", desc: "Geometric staggered pattern providing a unique textured look.", imgUrl: "https://i.ibb.co/wNz9X34w/Untitled-3.png" })}
         />
         <DesignCard 
           title="Geometric" 
           desc="Modern intersecting lines creating a sophisticated privacy barrier."
           imgUrl="https://live.staticflickr.com/65535/55177673305_8bfbda1dec_z.jpg"
-          onSelect={onNext}
+          onSelect={() => onNext({ title: "Geometric", desc: "Modern intersecting lines creating a sophisticated privacy barrier.", imgUrl: "https://live.staticflickr.com/65535/55177673305_8bfbda1dec_z.jpg" })}
         />
         <DesignCard 
           title="Reeded" 
           desc="Vertical fluted glass effect for a vintage yet contemporary feel."
           imgUrl="https://live.staticflickr.com/65535/55177271926_3f99312d6d_z.jpg"
-          onSelect={onNext}
+          onSelect={() => onNext({ title: "Reeded", desc: "Vertical fluted glass effect for a vintage yet contemporary feel.", imgUrl: "https://live.staticflickr.com/65535/55177271926_3f99312d6d_z.jpg" })}
         />
         <DesignCard 
           title="Dusted" 
           desc="Subtle sandblasted appearance for elegant, understated privacy."
           imgUrl="https://live.staticflickr.com/65535/55177271941_280b8f8fc6_z.jpg"
-          onSelect={onNext}
+          onSelect={() => onNext({ title: "Dusted", desc: "Subtle sandblasted appearance for elegant, understated privacy.", imgUrl: "https://live.staticflickr.com/65535/55177271941_280b8f8fc6_z.jpg" })}
         />
       </div>
 
@@ -749,7 +756,7 @@ function DesignCard({ title, desc, imgUrl, popular, onSelect }: { title: string,
   );
 }
 
-function Step3({ windowCount, privacyLevel }: { windowCount: number, privacyLevel: number }) {
+function Step3({ windowCount, privacyLevel, selectedDesign }: { windowCount: number, privacyLevel: number, selectedDesign: DesignType | null }) {
   const count = useMotionValue(0);
   const rounded = useTransform(count, Math.round);
   const totalPrice = windowCount * 30;
@@ -763,7 +770,7 @@ function Step3({ windowCount, privacyLevel }: { windowCount: number, privacyLeve
     <div className="flex flex-col -mt-8 -mx-6">
       {/* Hero Image */}
       <div className="relative h-[400px] w-full overflow-hidden">
-        <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&q=80&w=1200" alt="Interior" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+        <img src={selectedDesign?.imgUrl || "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&q=80&w=1200"} alt={selectedDesign?.title || "Interior"} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
         
         {/* Floating Card */}
         <div className="absolute bottom-6 left-6 right-6">
@@ -772,8 +779,8 @@ function Step3({ windowCount, privacyLevel }: { windowCount: number, privacyLeve
               <ShieldCheck size={18} className="text-brand-lime" />
               <span className="font-bold text-[8px] uppercase tracking-widest text-text-muted">Pattern Selected</span>
             </div>
-            <h2 className="font-headline text-xl font-extrabold text-text-main mb-2">Geometric Frost</h2>
-            <p className="text-xs text-text-muted mb-4">High-precision laser cut privacy film with 85% light transmission.</p>
+            <h2 className="font-headline text-xl font-extrabold text-text-main mb-2">{selectedDesign?.title || "Geometric Frost"}</h2>
+            <p className="text-xs text-text-muted mb-4">{selectedDesign?.desc || "High-precision laser cut privacy film with 85% light transmission."}</p>
             
             {/* Privacy Level Indicator */}
             <div className="flex flex-col gap-2">
