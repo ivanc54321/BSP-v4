@@ -5,7 +5,7 @@ import {
   Info, Lightbulb, ShieldCheck, Minus, Plus, 
   ArrowRight, EyeOff, Shield, Sliders, Calendar, 
   Bookmark, Check, ChevronDown, LayoutGrid,
-  Moon, Sun, Phone, MessageSquare, Briefcase
+  Moon, Sun, Phone, MessageSquare, Briefcase, Play
 } from 'lucide-react';
 import { Chatbot } from './components/Chatbot';
 
@@ -391,10 +391,36 @@ function Step0({ onNext, onOpenChat }: { onNext: () => void, onOpenChat: () => v
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 1.2, ease: "easeOut" }}
           onClick={onNext} 
-          className="w-full bg-brand-lime text-black font-headline font-extrabold text-lg py-5 rounded-2xl shadow-[0_10px_30px_rgba(180,207,82,0.25)] hover:bg-[#b4cf52] hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-2"
+          className="w-full bg-brand-lime text-black font-headline font-extrabold text-lg py-5 rounded-2xl shadow-[0_10px_30px_rgba(180,207,82,0.25)] hover:bg-[#b4cf52] hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-2 mb-8"
         >
           START YOUR PRECISION QUOTE <ArrowRight size={20} />
         </motion.button>
+
+        {/* Testimonial Video */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 1.4, ease: "easeOut" }}
+          className="w-full rounded-2xl overflow-hidden relative group cursor-pointer border border-surface-highest/30 shadow-lg"
+        >
+          <div className="aspect-video relative">
+            <img 
+              src="https://live.staticflickr.com/31337/55185464560_a2453c94c2_z.jpg" 
+              alt="Customer Testimonial" 
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              referrerPolicy="no-referrer"
+            />
+            <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+              <div className="w-16 h-16 rounded-full bg-brand-lime/90 text-black flex items-center justify-center shadow-[0_0_30px_rgba(180,207,82,0.4)] group-hover:scale-110 transition-transform">
+                <Play size={28} className="ml-1" fill="currentColor" />
+              </div>
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
+              <p className="text-white font-bold text-sm">"The precision fit is incredible..."</p>
+              <p className="text-brand-lime text-xs font-medium">Sarah T. — Verified Customer</p>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </div>
   );
