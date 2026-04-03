@@ -154,6 +154,9 @@ function ProgressBar({ step, total, label }: { step: number, total: number, labe
 // --- STEPS ---
 
 function Step0({ onNext, onOpenChat }: { onNext: () => void, onOpenChat: () => void }) {
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+
   return (
     <div className="flex flex-col -mt-8 -mx-6">
       {/* Hero Section */}
@@ -165,10 +168,11 @@ function Step0({ onNext, onOpenChat }: { onNext: () => void, onOpenChat: () => v
             alt="Installation Background"
             referrerPolicy="no-referrer"
             initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 0.6, scale: 1 }}
+            animate={isImageLoaded ? { opacity: 0.6, scale: 1 } : { opacity: 0, scale: 1.05 }}
             transition={{ duration: 1.5, ease: "easeInOut" }}
             className="absolute inset-0 w-full h-full object-cover"
             style={{ filter: 'grayscale(30%) contrast(1.1)' }}
+            onLoad={() => setIsImageLoaded(true)}
           />
         </div>
 
@@ -176,18 +180,38 @@ function Step0({ onNext, onOpenChat }: { onNext: () => void, onOpenChat: () => v
         <div className="absolute inset-0 z-0 opacity-20 mix-blend-overlay" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, black 1px, transparent 0)', backgroundSize: '16px 16px' }}></div>
 
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+          initial="hidden"
+          animate={isImageLoaded ? "visible" : "hidden"}
+          variants={{
+            hidden: {},
+            visible: {
+              transition: {
+                staggerChildren: 0.2,
+                delayChildren: 0.3
+              }
+            }
+          }}
           className="relative z-10 flex flex-col items-center text-center mt-4"
         >
-          <h1 className="font-headline text-3xl font-black text-white tracking-tight leading-[1.05] mb-2 uppercase drop-shadow-md">
+          <motion.h1 
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+            }}
+            className="font-headline text-3xl font-black text-white tracking-tight leading-[1.05] mb-2 uppercase drop-shadow-md"
+          >
             Static Glazing<br/>
             <span className="text-brand-lime drop-shadow-sm">Installation</span>
-          </h1>
-          <h2 className="font-headline text-xs font-bold text-white/80 tracking-widest uppercase mb-4 drop-shadow-md">
+          </motion.h1>
+          <motion.h2 
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+            }}
+            className="font-headline text-xs font-bold text-white/80 tracking-widest uppercase mb-4 drop-shadow-md"
+          >
             Window Privacy Film
-          </h2>
+          </motion.h2>
         </motion.div>
       </div>
 
@@ -402,23 +426,35 @@ function Step0({ onNext, onOpenChat }: { onNext: () => void, onOpenChat: () => v
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 1.4, ease: "easeOut" }}
           className="w-full rounded-2xl overflow-hidden relative group cursor-pointer border border-surface-highest/30 shadow-lg"
+          onClick={() => setIsVideoPlaying(true)}
         >
-          <div className="aspect-video relative">
-            <img 
-              src="https://live.staticflickr.com/31337/55185464560_a2453c94c2_z.jpg" 
-              alt="Customer Testimonial" 
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              referrerPolicy="no-referrer"
-            />
-            <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors flex items-center justify-center">
-              <div className="w-16 h-16 rounded-full bg-brand-lime/90 text-black flex items-center justify-center shadow-[0_0_30px_rgba(180,207,82,0.4)] group-hover:scale-110 transition-transform">
-                <Play size={28} className="ml-1" fill="currentColor" />
-              </div>
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
-              <p className="text-white font-bold text-sm">"The precision fit is incredible..."</p>
-              <p className="text-brand-lime text-xs font-medium">Sarah T. — Verified Customer</p>
-            </div>
+          <div className="aspect-video relative bg-black">
+            {isVideoPlaying ? (
+              <video 
+                src="https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" 
+                autoPlay 
+                controls 
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <>
+                <img 
+                  src="https://live.staticflickr.com/31337/55185464560_a2453c94c2_z.jpg" 
+                  alt="Customer Testimonial" 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full bg-brand-lime/90 text-black flex items-center justify-center shadow-[0_0_30px_rgba(180,207,82,0.4)] group-hover:scale-110 transition-transform">
+                    <Play size={28} className="ml-1" fill="currentColor" />
+                  </div>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
+                  <p className="text-white font-bold text-sm">"The precision fit is incredible..."</p>
+                  <p className="text-brand-lime text-xs font-medium">Sarah T. — Verified Customer</p>
+                </div>
+              </>
+            )}
           </div>
         </motion.div>
       </div>
