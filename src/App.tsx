@@ -776,9 +776,15 @@ function Step3({ windowCount, privacyLevel }: { windowCount: number, privacyLeve
             <p className="text-xs text-text-muted mb-4">High-precision laser cut privacy film with 85% light transmission.</p>
             
             {/* Privacy Level Indicator */}
-            <div className="flex items-center justify-between bg-surface-low rounded-lg p-3 border border-surface-highest/30">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted">Privacy Height</span>
-              <span className="text-xs font-extrabold text-brand-lime bg-brand-lime/10 px-2 py-1 rounded">{privacyLevel}%</span>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between bg-surface-low rounded-lg p-3 border border-surface-highest/30">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted">Windows Selected</span>
+                <span className="text-xs font-extrabold text-brand-lime bg-brand-lime/10 px-2 py-1 rounded">{windowCount}</span>
+              </div>
+              <div className="flex items-center justify-between bg-surface-low rounded-lg p-3 border border-surface-highest/30">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted">Privacy Height</span>
+                <span className="text-xs font-extrabold text-brand-lime bg-brand-lime/10 px-2 py-1 rounded">{privacyLevel}%</span>
+              </div>
             </div>
           </div>
         </div>

@@ -3,7 +3,19 @@ import { motion, AnimatePresence } from 'motion/react';
 import { X, Send, Bot, User, Loader2, MessageSquare } from 'lucide-react';
 import { GoogleGenAI } from '@google/genai';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+// Lazy initialization to prevent app crash on load if API key is missing
+let aiClient: GoogleGenAI | null = null;
+function getAIClient() {
+  if (!aiClient) {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      console.error("GEMINI_API_KEY is missing. Chatbot will not function.");
+      return null;
+    }
+    aiClient = new GoogleGenAI({ apiKey });
+  }
+  return aiClient;
+}
 
 interface Message {
   id: string;
@@ -36,8 +48,13 @@ export function Chatbot({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
     setIsLoading(true);
 
     try {
+      const client = getAIClient();
+      if (!client) {
+        throw new Error("API key is missing. Please configure GEMINI_API_KEY in Vercel.");
+      }
+
       // Build chat history for context
-      const chat = ai.chats.create({
+      const chat = client.chats.create({
         model: 'gemini-3.1-pro-preview',
         config: {
           systemInstruction: "You are a helpful customer support assistant for Brightside, a company that provides Static Glazing installation (window privacy film). You answer questions about pricing, designs, and the installation process. Be concise, friendly, and helpful. The app allows users to get a precision quote by entering window dimensions and selecting a design.",
