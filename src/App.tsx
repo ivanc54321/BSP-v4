@@ -184,33 +184,43 @@ function Step0({ onNext, onOpenChat }: { onNext: () => void, onOpenChat: () => v
         </motion.div>
       </div>
 
-      {/* Ticker Scroll */}
-      <div className="relative z-10 -mt-24 mb-10 overflow-hidden py-3 bg-black/60 backdrop-blur-md border-y border-brand-lime/30 shadow-xl">
-        <motion.div
-          animate={{ x: [0, -1000] }}
-          transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
-          className="flex whitespace-nowrap items-center gap-8"
-        >
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="flex items-center gap-8">
-              <span className="text-brand-lime font-headline font-bold text-sm tracking-widest uppercase flex items-center gap-3">
-                <span className="relative flex h-2 w-2 shrink-0">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-lime opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-lime"></span>
-                </span>
-                Areas Covered
-              </span>
-              <span className="text-white font-headline font-bold text-sm tracking-widest uppercase">Broadstairs</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-lime/50"></span>
-              <span className="text-white font-headline font-bold text-sm tracking-widest uppercase">Margate</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-lime/50"></span>
-              <span className="text-white font-headline font-bold text-sm tracking-widest uppercase">Ramsgate</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-lime/50"></span>
-              <span className="text-brand-lime font-headline font-bold text-sm tracking-widest uppercase">More coming soon</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-lime/50"></span>
-            </div>
+      {/* Areas Covered Animation */}
+      <div className="relative z-10 -mt-24 mb-10 flex justify-center px-6">
+        <div className="bg-black/60 backdrop-blur-md border border-brand-lime/30 shadow-xl rounded-2xl py-3 px-5 flex flex-wrap justify-center items-center gap-x-2 gap-y-1 max-w-sm text-center">
+          <motion.span 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, delay: 0.5 }}
+            className="text-brand-lime font-headline font-bold text-xs tracking-widest uppercase flex items-center gap-2 w-full justify-center mb-1"
+          >
+            <span className="relative flex h-2 w-2 shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-lime opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-lime"></span>
+            </span>
+            Areas Covered
+          </motion.span>
+          
+          {['Broadstairs,', 'Margate,', 'Ramsgate.'].map((word, i) => (
+            <motion.span
+              key={word}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.9 + (i * 0.2) }}
+              className="text-white font-headline font-bold text-xs tracking-widest uppercase"
+            >
+              {word}
+            </motion.span>
           ))}
-        </motion.div>
+          
+          <motion.span
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, delay: 1.6 }}
+            className="text-brand-lime font-headline font-bold text-[10px] tracking-widest uppercase w-full text-center mt-1"
+          >
+            More coming soon
+          </motion.span>
+        </div>
       </div>
 
       {/* Floating Buttons */}
@@ -448,13 +458,8 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
             {/* Left Pane Outer */}
             <div className="flex-[0.48] bg-[#f8f8f8] rounded-sm border-[4px] border-[#ffffff] relative shadow-[inset_0_0_8px_rgba(0,0,0,0.3)] overflow-hidden pointer-events-none">
               {/* "Outside" Background */}
-              <div className="absolute inset-0 bg-gradient-to-b from-sky-400 via-sky-200 to-sky-100">
-                {/* Realistic Clouds */}
-                <div className="absolute top-6 left-2 w-16 h-6 bg-white/90 rounded-full blur-[1px] shadow-[inset_0_-2px_4px_rgba(0,0,0,0.1)]"></div>
-                <div className="absolute top-8 left-10 w-12 h-5 bg-white/80 rounded-full blur-[1px] shadow-[inset_0_-2px_4px_rgba(0,0,0,0.1)]"></div>
-                <div className="absolute top-14 -left-4 w-20 h-6 bg-white/70 rounded-full blur-[2px]"></div>
-                
-                <div className="absolute bottom-0 left-0 right-0 h-2/5 bg-gradient-to-t from-emerald-800/60 via-emerald-600/30 to-transparent blur-[1px]"></div>
+              <div className="absolute inset-0 overflow-hidden">
+                <img src="https://live.staticflickr.com/65535/55185348105_72df732011_b.jpg" alt="Outside" className="absolute top-[-16px] left-[-16px] w-64 h-64 object-cover max-w-none" referrerPolicy="no-referrer" />
                 {/* Glass Reflection */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/40 pointer-events-none"></div>
                 <div className="absolute -inset-full top-0 left-[-100%] w-[200%] h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -rotate-45 transform translate-x-1/4 pointer-events-none"></div>
@@ -494,12 +499,8 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
             {/* Right Pane Outer */}
             <div className="flex-[0.52] bg-[#f8f8f8] rounded-sm border-[4px] border-[#ffffff] relative shadow-[inset_0_0_8px_rgba(0,0,0,0.3)] overflow-hidden pointer-events-none">
               {/* "Outside" Background */}
-              <div className="absolute inset-0 bg-gradient-to-b from-sky-400 via-sky-200 to-sky-100">
-                {/* Realistic Clouds */}
-                <div className="absolute top-12 right-4 w-24 h-8 bg-white/90 rounded-full blur-[1px] shadow-[inset_0_-2px_4px_rgba(0,0,0,0.1)]"></div>
-                <div className="absolute top-16 right-16 w-16 h-6 bg-white/80 rounded-full blur-[1px] shadow-[inset_0_-2px_4px_rgba(0,0,0,0.1)]"></div>
-                
-                <div className="absolute bottom-0 left-0 right-0 h-2/5 bg-gradient-to-t from-emerald-800/60 via-emerald-600/30 to-transparent blur-[1px]"></div>
+              <div className="absolute inset-0 overflow-hidden">
+                <img src="https://live.staticflickr.com/65535/55185348105_72df732011_b.jpg" alt="Outside" className="absolute top-[-16px] right-[-16px] w-64 h-64 object-cover max-w-none" referrerPolicy="no-referrer" />
                 {/* Glass Reflection */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/40 pointer-events-none"></div>
                 <div className="absolute -inset-full top-0 left-[-100%] w-[200%] h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -rotate-45 transform translate-x-1/4 pointer-events-none"></div>
