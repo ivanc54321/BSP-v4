@@ -45,11 +45,13 @@ export default function App() {
         <button onClick={prevStep} className={`text-brand-dark hover:opacity-70 transition-opacity p-2 -ml-2 ${step === 0 ? 'invisible' : ''}`}>
           <ArrowLeft size={20} />
         </button>
-        <div className="font-headline font-extrabold text-base flex items-center gap-2 text-text-main tracking-tight">
-          <div className="w-6 h-6 bg-brand-lime rounded-tl-lg rounded-br-lg flex items-center justify-center text-black font-bold text-[10px]">
-            b
-          </div>
-          Brightside
+        <div className="flex items-center justify-center">
+          <img 
+            src={isDark ? "https://live.staticflickr.com/65535/55185118963_f42a70897c_o.png" : "https://live.staticflickr.com/65535/55187130150_67854d774c_o.png"} 
+            alt="Brightside Logo" 
+            className="h-7 object-contain"
+            referrerPolicy="no-referrer"
+          />
         </div>
         <div className="flex items-center gap-2 -mr-2">
           <button 
