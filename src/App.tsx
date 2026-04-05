@@ -49,7 +49,7 @@ export default function App() {
           <img 
             src={isDark ? "https://live.staticflickr.com/65535/55185118963_f42a70897c_o.png" : "https://live.staticflickr.com/65535/55187130150_67854d774c_o.png"} 
             alt="Brightside Logo" 
-            className="h-7 object-contain"
+            className="h-10 sm:h-12 object-contain"
             referrerPolicy="no-referrer"
           />
         </div>
