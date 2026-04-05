@@ -93,7 +93,7 @@ export default function App() {
           )}
           {step === 3 && (
             <motion.div key="step3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
-              <Step3 windowCount={windowCount} privacyLevel={privacyLevel} selectedDesign={selectedDesign} />
+              <Step3 windowCount={windowCount} privacyLevel={privacyLevel} selectedDesign={selectedDesign} onPlaceOrder={() => setStep(6)} />
             </motion.div>
           )}
           {step === 4 && (
@@ -104,6 +104,22 @@ export default function App() {
           {step === 5 && (
             <motion.div key="step5" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
               <WhyUs />
+            </motion.div>
+          )}
+          {step === 6 && (
+            <motion.div key="step6" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.4, ease: "easeOut" }}>
+              <CheckoutPage 
+                windowCount={windowCount} 
+                privacyLevel={privacyLevel} 
+                selectedDesign={selectedDesign} 
+                onConfirm={() => setStep(7)} 
+                onBack={() => setStep(3)} 
+              />
+            </motion.div>
+          )}
+          {step === 7 && (
+            <motion.div key="step7" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.4, ease: "easeOut" }}>
+              <OrderSuccessPage onBack={() => setStep(0)} />
             </motion.div>
           )}
         </AnimatePresence>
@@ -706,7 +722,7 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
         </div>
       </div>
 
-      <button onClick={onNext} className="w-full bg-brand-lime text-black font-headline font-extrabold text-sm py-4 rounded-full shadow-lg shadow-brand-lime/20 hover:bg-[#b4cf52] hover:-translate-y-0.5 transition-all active:scale-95 flex items-center justify-center gap-2 mb-12">
+      <button onClick={onNext} className="w-full bg-brand-lime text-black font-headline font-extrabold text-sm py-4 rounded-full shadow-[0_0_15px_rgba(180,207,82,0.5)] animate-pulse hover:bg-[#b4cf52] hover:-translate-y-0.5 transition-all active:scale-95 flex items-center justify-center gap-2 mb-12">
         Next <ArrowRight size={18} />
       </button>
 
@@ -820,7 +836,7 @@ function DesignCard({ title, desc, imgUrl, popular, onSelect }: { title: string,
   );
 }
 
-function Step3({ windowCount, privacyLevel, selectedDesign }: { windowCount: number, privacyLevel: number, selectedDesign: DesignType | null }) {
+function Step3({ windowCount, privacyLevel, selectedDesign, onPlaceOrder }: { windowCount: number, privacyLevel: number, selectedDesign: DesignType | null, onPlaceOrder: () => void }) {
   const count = useMotionValue(0);
   const rounded = useTransform(count, Math.round);
   const totalPrice = windowCount * 30;
@@ -894,7 +910,10 @@ function Step3({ windowCount, privacyLevel, selectedDesign }: { windowCount: num
         <div className="bg-surface-bg border border-surface-highest rounded-3xl p-6 shadow-sm">
           <h4 className="font-headline font-bold text-lg mb-6">Ready to proceed?</h4>
           <div className="space-y-3 mb-6">
-            <button className="w-full bg-brand-lime text-black font-bold text-sm py-4 rounded-full flex items-center justify-center gap-2 hover:bg-[#b4cf52] transition-transform active:scale-95 shadow-lg shadow-brand-lime/20">
+            <button 
+              onClick={onPlaceOrder}
+              className="w-full bg-brand-lime text-black font-bold text-sm py-4 rounded-full flex items-center justify-center gap-2 hover:bg-[#b4cf52] transition-transform active:scale-95 shadow-[0_0_15px_rgba(180,207,82,0.5)] animate-pulse"
+            >
               Place Order <ArrowRight size={18} />
             </button>
             <button className="w-full bg-surface-high text-text-main font-bold text-sm py-4 rounded-full flex items-center justify-center gap-2 hover:bg-surface-highest transition-transform active:scale-95">
@@ -913,6 +932,122 @@ function Step3({ windowCount, privacyLevel, selectedDesign }: { windowCount: num
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function CheckoutPage({ windowCount, privacyLevel, selectedDesign, onConfirm, onBack }: { windowCount: number, privacyLevel: number, selectedDesign: DesignType | null, onConfirm: () => void, onBack: () => void }) {
+  const totalPrice = windowCount * 30;
+  
+  return (
+    <div className="flex flex-col -mt-8 -mx-6 pb-20">
+      <div className="px-6 pt-6 pb-4 flex items-center gap-4">
+        <button onClick={onBack} className="p-2 bg-surface-low rounded-full hover:bg-surface-highest transition-colors">
+          <ArrowLeft size={20} />
+        </button>
+        <h2 className="font-headline text-2xl font-extrabold">Checkout</h2>
+      </div>
+
+      <div className="px-6 space-y-8">
+        {/* Order Summary */}
+        <div className="bg-surface-low rounded-3xl p-6 border border-surface-highest/50 shadow-sm">
+          <h3 className="font-headline font-bold text-lg mb-4 flex items-center gap-2">
+            <FileText size={20} className="text-brand-lime" /> Order Summary
+          </h3>
+          <div className="space-y-3 text-sm">
+            <div className="flex justify-between">
+              <span className="text-text-muted">Design</span>
+              <span className="font-bold">{selectedDesign?.title || "Geometric Frost"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-text-muted">Windows</span>
+              <span className="font-bold">{windowCount}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-text-muted">Privacy Level</span>
+              <span className="font-bold">{privacyLevel}%</span>
+            </div>
+            <div className="pt-3 border-t border-surface-highest flex justify-between items-center">
+              <span className="font-bold">Total Estimate</span>
+              <span className="font-headline text-xl font-extrabold text-brand-lime">£{totalPrice}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Contact & Address Form */}
+        <div>
+          <h3 className="font-headline font-bold text-lg mb-4 flex items-center gap-2">
+            <User size={20} className="text-brand-lime" /> Your Details
+          </h3>
+          <div className="space-y-4">
+            <input type="text" placeholder="Full Name" className="w-full bg-surface-low border border-surface-highest rounded-xl p-4 text-sm focus:ring-2 focus:ring-brand-lime outline-none transition-shadow placeholder:text-text-muted" />
+            <input type="email" placeholder="Email Address" className="w-full bg-surface-low border border-surface-highest rounded-xl p-4 text-sm focus:ring-2 focus:ring-brand-lime outline-none transition-shadow placeholder:text-text-muted" />
+            <input type="tel" placeholder="Phone Number" className="w-full bg-surface-low border border-surface-highest rounded-xl p-4 text-sm focus:ring-2 focus:ring-brand-lime outline-none transition-shadow placeholder:text-text-muted" />
+            <input type="text" placeholder="Address Line 1" className="w-full bg-surface-low border border-surface-highest rounded-xl p-4 text-sm focus:ring-2 focus:ring-brand-lime outline-none transition-shadow placeholder:text-text-muted" />
+            <div className="grid grid-cols-2 gap-4">
+              <input type="text" placeholder="City" className="w-full bg-surface-low border border-surface-highest rounded-xl p-4 text-sm focus:ring-2 focus:ring-brand-lime outline-none transition-shadow placeholder:text-text-muted" />
+              <input type="text" placeholder="Postcode" className="w-full bg-surface-low border border-surface-highest rounded-xl p-4 text-sm focus:ring-2 focus:ring-brand-lime outline-none transition-shadow placeholder:text-text-muted" />
+            </div>
+          </div>
+        </div>
+
+        {/* Installation Booking */}
+        <div>
+          <h3 className="font-headline font-bold text-lg mb-4 flex items-center gap-2">
+            <Calendar size={20} className="text-brand-lime" /> Book Installation
+          </h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-text-muted mb-2 ml-1">Preferred Date</label>
+              <input type="date" className="w-full bg-surface-low border border-surface-highest rounded-xl p-4 text-sm focus:ring-2 focus:ring-brand-lime outline-none transition-shadow text-text-main" />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-text-muted mb-2 ml-1">Preferred Time</label>
+              <select className="w-full bg-surface-low border border-surface-highest rounded-xl p-4 text-sm focus:ring-2 focus:ring-brand-lime outline-none transition-shadow text-text-main appearance-none">
+                <option value="">Select a time slot</option>
+                <option value="morning">Morning (9am - 12pm)</option>
+                <option value="afternoon">Afternoon (12pm - 4pm)</option>
+                <option value="evening">Evening (4pm - 7pm)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Confirm Button */}
+        <button 
+          onClick={onConfirm}
+          className="w-full bg-brand-lime text-black font-bold text-sm py-4 rounded-full flex items-center justify-center gap-2 hover:bg-[#b4cf52] transition-transform active:scale-95 shadow-[0_0_15px_rgba(180,207,82,0.5)] animate-pulse mt-8"
+        >
+          Confirm Booking <ArrowRight size={18} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function OrderSuccessPage({ onBack }: { onBack: () => void }) {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-6">
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: "spring", bounce: 0.5 }}
+        className="w-24 h-24 bg-brand-lime/20 rounded-full flex items-center justify-center mb-6"
+      >
+        <div className="w-16 h-16 bg-brand-lime rounded-full flex items-center justify-center text-black shadow-lg shadow-brand-lime/30">
+          <ShieldCheck size={32} />
+        </div>
+      </motion.div>
+      <h2 className="font-headline text-3xl font-extrabold mb-4">Order Received!</h2>
+      <p className="text-text-muted mb-8 max-w-sm">
+        Thank you for choosing Brightside. We've received your request and our team will be in touch shortly to confirm your installation date.
+      </p>
+      <button 
+        onClick={onBack}
+        className="bg-surface-high text-text-main font-bold py-3 px-8 rounded-full hover:bg-surface-highest transition-colors"
+      >
+        Back to Home
+      </button>
     </div>
   );
 }
