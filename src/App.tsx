@@ -1,13 +1,21 @@
+/// <reference types="vite/client" />
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'motion/react';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { 
   ArrowLeft, X, Home, FileText, User, Settings, HelpCircle,
   Info, Lightbulb, ShieldCheck, Minus, Plus, 
   ArrowRight, EyeOff, Shield, Sliders, Calendar, 
   Bookmark, Check, ChevronDown, LayoutGrid,
-  Moon, Sun, Phone, MessageSquare, Briefcase, Play
+  Moon, Sun, Phone, MessageSquare, Briefcase, Play, CreditCard
 } from 'lucide-react';
 import { Chatbot } from './components/Chatbot';
+
+// Initialize Stripe
+const stripePromise = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY 
+  ? loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY) 
+  : null;
 
 export type DesignType = {
   title: string;
@@ -530,29 +538,27 @@ function Step1({ onNext, windowCount, setWindowCount, privacyLevel, setPrivacyLe
     <div className="flex flex-col">
       <ProgressBar step={1} total={3} label="33% Completed" />
       
-      {/* Privacy Slider */}
-      <div className="mb-8 bg-surface-low p-5 rounded-2xl border border-surface-highest/30 shadow-sm">
-        <div className="flex justify-between items-center mb-3">
-          <label className="font-bold text-xs text-text-main flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-brand-lime"></div>
-            Privacy Film Height
-          </label>
-          <span className="text-[10px] font-bold text-brand-dark bg-brand-lime/20 px-2 py-1 rounded-md">{privacyLevel}%</span>
-        </div>
-        <input
-          type="range"
-          min="0"
-          max="100"
-          value={privacyLevel}
-          onChange={(e) => setPrivacyLevel(Number(e.target.value))}
-          className="w-full h-2 bg-surface-highest rounded-lg appearance-none cursor-pointer accent-brand-lime"
-        />
-      </div>
-
-      {/* Diagram Area */}
-      <div className="bg-surface-low rounded-[2rem] p-8 mb-12 flex justify-center items-center relative overflow-hidden">
+      {/* Diagram Area with Side Slider */}
+      <div className="bg-surface-low rounded-[2rem] p-8 mb-12 flex justify-center items-center relative overflow-hidden gap-8">
         <div className="absolute inset-0 bg-gradient-to-tr from-brand-lime/5 to-transparent"></div>
         
+        {/* Vertical Slider */}
+        <div className="relative h-64 flex flex-col items-center z-20">
+          <span className="text-[10px] font-bold text-brand-dark bg-brand-lime/20 px-2 py-1 rounded-md mb-2">{privacyLevel}%</span>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={privacyLevel}
+            onChange={(e) => setPrivacyLevel(Number(e.target.value))}
+            className="h-full w-2 bg-surface-highest rounded-lg appearance-none cursor-pointer accent-brand-lime"
+            style={{ writingMode: 'bt-lr', WebkitAppearance: 'slider-vertical' } as any}
+          />
+          <label className="font-bold text-[10px] text-text-muted mt-2 uppercase tracking-wider text-center w-16">
+            Height
+          </label>
+        </div>
+
         <div className="relative w-64 h-64 z-10 my-4">
           {/* Window Frame Outer */}
           <div 
@@ -936,8 +942,89 @@ function Step3({ windowCount, privacyLevel, selectedDesign, onPlaceOrder }: { wi
   );
 }
 
+function CheckoutForm({ onConfirm, amount }: { onConfirm: () => void, amount: number }) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!stripe || !elements) return;
+
+    setIsProcessing(true);
+    setErrorMessage(null);
+
+    const { error } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        // We don't actually want to redirect in this demo, so we handle it manually
+        // or we can just simulate success if we prevent default redirect
+      },
+      redirect: 'if_required',
+    });
+
+    if (error) {
+      setErrorMessage(error.message || "An unexpected error occurred.");
+      setIsProcessing(false);
+    } else {
+      // Payment succeeded
+      setIsProcessing(false);
+      onConfirm();
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="bg-surface-low p-4 rounded-xl border border-surface-highest">
+        <PaymentElement options={{ layout: 'tabs' }} />
+      </div>
+      
+      {errorMessage && (
+        <div className="text-red-500 text-sm font-medium px-2">{errorMessage}</div>
+      )}
+
+      <button 
+        type="submit"
+        disabled={!stripe || isProcessing}
+        className="w-full bg-brand-lime text-black font-bold text-sm py-4 rounded-full flex items-center justify-center gap-2 hover:bg-[#b4cf52] transition-transform active:scale-95 shadow-[0_0_15px_rgba(180,207,82,0.5)] animate-pulse disabled:opacity-50 disabled:animate-none"
+      >
+        {isProcessing ? "Processing..." : `Pay £${amount} & Confirm`} <ArrowRight size={18} />
+      </button>
+    </form>
+  );
+}
+
 function CheckoutPage({ windowCount, privacyLevel, selectedDesign, onConfirm, onBack }: { windowCount: number, privacyLevel: number, selectedDesign: DesignType | null, onConfirm: () => void, onBack: () => void }) {
   const totalPrice = windowCount * 30;
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [isKeyMissing, setIsKeyMissing] = useState(false);
+
+  useEffect(() => {
+    if (!stripePromise) {
+      setIsKeyMissing(true);
+      return;
+    }
+
+    fetch('/api/create-payment-intent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount: totalPrice }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.clientSecret) {
+          setClientSecret(data.clientSecret);
+        } else if (data.error) {
+          console.error("Stripe error:", data.error);
+          setIsKeyMissing(true);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to fetch payment intent:", err);
+        setIsKeyMissing(true);
+      });
+  }, [totalPrice]);
   
   return (
     <div className="flex flex-col -mt-8 -mx-6 pb-20">
@@ -1013,13 +1100,34 @@ function CheckoutPage({ windowCount, privacyLevel, selectedDesign, onConfirm, on
           </div>
         </div>
 
-        {/* Confirm Button */}
-        <button 
-          onClick={onConfirm}
-          className="w-full bg-brand-lime text-black font-bold text-sm py-4 rounded-full flex items-center justify-center gap-2 hover:bg-[#b4cf52] transition-transform active:scale-95 shadow-[0_0_15px_rgba(180,207,82,0.5)] animate-pulse mt-8"
-        >
-          Confirm Booking <ArrowRight size={18} />
-        </button>
+        {/* Payment Section */}
+        <div>
+          <h3 className="font-headline font-bold text-lg mb-4 flex items-center gap-2">
+            <CreditCard size={20} className="text-brand-lime" /> Payment
+          </h3>
+          
+          {isKeyMissing ? (
+            <div className="bg-surface-low p-6 rounded-2xl border border-yellow-500/30 text-center">
+              <p className="text-sm text-text-muted mb-4">
+                Stripe keys are not configured. Please add <code className="text-brand-lime">STRIPE_SECRET_KEY</code> and <code className="text-brand-lime">VITE_STRIPE_PUBLISHABLE_KEY</code> to your environment variables to enable payments.
+              </p>
+              <button 
+                onClick={onConfirm}
+                className="w-full bg-surface-high text-text-main font-bold text-sm py-4 rounded-full flex items-center justify-center gap-2 hover:bg-surface-highest transition-transform active:scale-95"
+              >
+                Skip Payment (Demo Mode) <ArrowRight size={18} />
+              </button>
+            </div>
+          ) : clientSecret && stripePromise ? (
+            <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'night', variables: { colorPrimary: '#b4cf52' } } }}>
+              <CheckoutForm onConfirm={onConfirm} amount={totalPrice} />
+            </Elements>
+          ) : (
+            <div className="flex justify-center p-8">
+              <div className="w-8 h-8 border-4 border-brand-lime border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
